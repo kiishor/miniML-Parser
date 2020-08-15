@@ -1,0 +1,68 @@
+# depslib dependency file v1.0
+1595054399 source:c:\project\xml_code_generator\example\shiporder\shiporder.c
+	<stdint.h>
+	<stdbool.h>
+	<stdlib.h>
+	<stddef.h>
+	<string.h>
+	<stdio.h>
+	<float.h>
+	"common.h"
+	"libs/parse_xml.h"
+
+1583670340 c:\project\xml_code_generator\src\includes\common.h
+
+1596473924 c:\project\xml_code_generator\src\includes\libs\parse_xml.h
+	"xml_content.h"
+
+1596965118 c:\project\xml_code_generator\src\includes\libs\xml_content.h
+	<stdbool.h>
+
+1596473924 source:c:\project\xml_code_generator\src\libs\parse_xml.c
+	<stdint.h>
+	<string.h>
+	<stdbool.h>
+	<stdlib.h>
+	"libs/parse_xml.h"
+
+1584437532 source:c:\project\xml_code_generator\example\shiporder\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	<stdbool.h>
+	"libs/parse_xml.h"
+
+1591533388 c:\project\xml_code_generator\src\includes\libs\xs_data_type.h
+
+1596282956 source:c:\project\xml_code_generator\src\libs\xml_content.c
+	<stdint.h>
+	<string.h>
+	<stdbool.h>
+	<stdlib.h>
+	"libs/xml_content.h"
+
+1596890420 source:c:\project\xml_code_generator\example\shiporder\src\shiporder.c
+	<stdlib.h>
+	<stdbool.h>
+	<float.h>
+	"shiporder.h"
+
+1596890131 source:c:\project\xml_code_generator\example\shiporder\src\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	<stdbool.h>
+	"libs/parse_xml.h"
+	"shiporder.h"
+
+1596887727 c:\project\xml_code_generator\example\shiporder\src\shiporder.h
+	<stdint.h>
+	<stdbool.h>
+	"libs/parse_xml.h"
+
+1596897151 source:c:\project\xml_code_generator\example\shiporder\src\shiporder_print.c
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	"shiporder.h"
+
