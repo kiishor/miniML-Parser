@@ -15,7 +15,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "libs/xml_content.h"
+#include "xml_content.h"
 
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
@@ -92,7 +92,7 @@ const char* extract_content(const xml_content_t* const content,
   case EN_STRING:
   {
     string_t* const String = target;
-    String->String = tag;
+    String->String = (char*)tag;
     String->Length = length;
     break;
   }

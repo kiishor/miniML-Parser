@@ -32,20 +32,16 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add directory="../../../src/includes" />
+			<Add directory="../../../src" />
 		</Compiler>
-		<Unit filename="../../../src/includes/common.h" />
-		<Unit filename="../../../src/includes/libs/parse_xml.h" />
-		<Unit filename="../../../src/includes/libs/xml_content.h" />
-		<Unit filename="../../../src/libs/parse_xml.c">
+		<Unit filename="../../../src/parse_xml.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../src/libs/xml_content.c">
+		<Unit filename="../../../src/parse_xml.h" />
+		<Unit filename="../../../src/xml_content.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="../../../xsd/shiporder.xml" />
-		<Unit filename="../../../xsd/shiporder1.xsd" />
-		<Unit filename="../../../xsd/shiporder2.xsd" />
-		<Unit filename="../../../xsd/shiporder3.xsd" />
+		<Unit filename="../../../src/xml_content.h" />
 		<Unit filename="../src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -56,6 +52,10 @@
 		<Unit filename="../src/shiporder_print.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../xml/shiporder.xml" />
+		<Unit filename="../xml/shiporder1.xsd" />
+		<Unit filename="../xml/shiporder2.xsd" />
+		<Unit filename="../xml/shiporder3.xsd" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

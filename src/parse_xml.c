@@ -14,7 +14,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "libs/parse_xml.h"
+#include "parse_xml.h"
 
 /*
  *	--------------------------- FORWARD DECLARATION ---------------------------
