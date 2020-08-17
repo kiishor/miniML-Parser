@@ -15,24 +15,27 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "xml_content.h"
+#include "parse_xml.h"
+
 
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
 
-static inline bool get_duration_content(char** source, const char* const end,
+static inline bool get_duration_content(const char* source, const char* const end,
                                         const char* pToken, uint32_t* pTarget)
 {
-  for(uint32_t i = 0; (i < 3) && (*source < end); i++)
+  for(uint32_t i = 0; (i < 3) && (source < end); i++)
   {
-    uint32_t value = strtoul(*source, source, 10);
+    char* endptr;
+    uint32_t value = strtoul(source, &endptr, 10);
 
-    if(*source >= end)
+    if(endptr >= end)
     {
       return false;
     }
-    while(pToken[i] != **source++)
+    source = endptr;
+    while(pToken[i] != *source++)
     {
       if(++i == 3)
       {
@@ -45,7 +48,8 @@ static inline bool get_duration_content(char** source, const char* const end,
   return true;
 }
 
-static inline bool get_duration(char* source, const char* const end, xs_duration_t* const duration)
+static inline xml_parse_result_t get_duration(const char* source, const char* const end,
+                                xs_duration_t* const duration)
 {
   duration->Sign = true;
   if(*source == '-')
@@ -55,36 +59,35 @@ static inline bool get_duration(char* source, const char* const end, xs_duration
 
   if(*source++ != 'P')
   {
-    return false;
+    return XML_DURATION_SYNTAX_ERROR;
   }
 
   if(*source != 'T')
   {
-    if(get_duration_content(&source, end, "YMD", &duration->Period.Date.Year) == false)
+    if(get_duration_content(source, end, "YMD", &duration->Period.Date.Year) == false)
     {
-      return false;
+      return XML_DURATION_SYNTAX_ERROR;
     }
   }
 
   if(*source++ == 'T')
   {
-    return get_duration_content(&source, end, "HMS", &duration->Period.Time.Hour);
+    if(get_duration_content(source, end, "HMS", &duration->Period.Time.Hour) == false)
+    {
+      return XML_DURATION_SYNTAX_ERROR;
+    }
   }
-  return true;
+
+  return XML_PARSE_SUCCESS;
 }
 
-const char* extract_content(const xml_content_t* const content,
-                            void* target, const char* source,
-                            char token)
+xml_parse_result_t extract_content(const xml_content_t* const content,
+                            void* target, const char* const source,
+                            size_t length)
 {
-  const char* const tag = source;
-  source = strchr(source, token);
-  ASSERT2(source!= NULL);
-  size_t length = source++ - tag;
-
   if(target == NULL)
   {
-    return source;
+    return XML_PARSE_SUCCESS;
   }
 
   switch(content->Type)
@@ -92,25 +95,27 @@ const char* extract_content(const xml_content_t* const content,
   case EN_STRING:
   {
     string_t* const String = target;
-    String->String = (char*)tag;
+    String->String = (char*)source;
     String->Length = length;
     break;
   }
 
   case EN_CHAR_ARRAY:
-    ASSERT2((length >= content->Facet.String.MinLength) &&
-       (length <= content->Facet.String.MaxLength));
-    memcpy(target, tag, length);
+    ASSERT2((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
+    ASSERT2((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
+
+    memcpy(target, source, length);
     ((char*)target)[length] = '\0';
     break;
 
   case EN_STRING_DYNAMIC:
   {
-    ASSERT2((length >= content->Facet.String.MinLength) &&
-       (length <= content->Facet.String.MaxLength));
+    ASSERT2((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
+    ASSERT2((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
+
     char* data = (char*)malloc(length);
-    ASSERT2(data!= NULL);
-    memcpy(data, tag, length);
+    ASSERT2(data!= NULL, FAILED_TO_ALLOCATE_MEMORY);
+    memcpy(data, source, length);
     data[length] = '\0';
     (*(char**)target) = data;
   }
@@ -118,19 +123,18 @@ const char* extract_content(const xml_content_t* const content,
 
   case EN_UNSIGNED:
   {
-    uint32_t value = strtoul(tag, NULL, 10);
-    ASSERT2((value >= content->Facet.Uint.MinValue) &&
-       (value <= content->Facet.Uint.MaxValue));
+    uint32_t value = strtoul(source, NULL, 10);
+    ASSERT2((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR);
+    ASSERT2((value <= content->Facet.Uint.MaxValue), XML_MAX_VALUE_ERROR);
     (*(uint32_t*)target) = value;
   }
   break;
 
-
   case EN_DECIMAL:
   {
-    float value = strtof(tag, NULL);
-    ASSERT2((value >= content->Facet.Decimal.MinValue) &&
-       (value <= content->Facet.Decimal.MaxValue));
+    float value = strtof(source, NULL);
+    ASSERT2((value >= content->Facet.Decimal.MinValue), XML_MIN_VALUE_ERROR);
+    ASSERT2((value <= content->Facet.Decimal.MaxValue), XML_MAX_VALUE_ERROR);
     (*(float*)target) = value;
   }
   break;
@@ -140,42 +144,38 @@ const char* extract_content(const xml_content_t* const content,
     const string_t* const list = content->Facet.Enum.List;
     for(uint32_t i = 0; i < content->Facet.Enum.Quantity; i++)
     {
-      if((length == list[i].Length) && (memcmp(list[i].String, tag, length) == 0))
+      if((length == list[i].Length) && (memcmp(list[i].String, source, length) == 0))
       {
         (*(uint32_t*)target) = i;
-        return source;
+        return XML_PARSE_SUCCESS;
       }
     }
   }
-  return NULL;
+  return XML_ENUM_NOT_FOUND;
 
   case EN_ENUM_UINT:
   {
-    uint32_t value = strtoul(tag, NULL, 10);
+    uint32_t value = strtoul(source, NULL, 10);
     const uint32_t* const list = content->Facet.Enum.List;
     for(uint32_t i = 0; i < content->Facet.Enum.Quantity; i++)
     {
       if(value == list[i])
       {
         (*(uint32_t*)target) = value;
-        return source;
+        return XML_PARSE_SUCCESS;
       }
     }
   }
-  return NULL;
+  return XML_ENUM_NOT_FOUND;
 
   case EN_DURATION:
   {
-    char* sourceStr = (char*)tag;
-    if(get_duration(sourceStr, sourceStr + length, target) == false)
-    {
-      return NULL;
-    }
+    return get_duration(source, source + length, target);
   }
   break;
 
   default:
-    return NULL;
+    return XML_CONTENT_UNSUPPORTED;
   }
-  return source;
+  return XML_PARSE_SUCCESS;
 }
