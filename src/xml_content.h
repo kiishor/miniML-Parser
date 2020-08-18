@@ -43,18 +43,9 @@ ADD_DATA_TYPE(XS_DATE_TIME,            xs:dateTime,           char*,    string) 
 ADD_DATA_TYPE(XS_DURATION,             xs:duration,           uint32_t, string)
 
 
-#define ASSERT1(expression, result, error)        \
-{                                                 \
-  if(!(expression))                               \
-  {                                               \
-    result = error;                               \
-    return NULL;                                  \
-  }                                               \
-}
 
-#define ASSERT2(expression, error_code) if(!(expression)) return error_code
+#define ASSERT3(expression, error_code) if(!(expression)) return error_code
 
-#define ASSERT3(expression) if(!(expression)) return NULL
 
 #define ALL_XML_CONTENT_TYPES       \
   ADD_CONTENT(EN_NO_XML_DATA_TYPE, XML element does not hold the content)    \
