@@ -43,16 +43,9 @@ ADD_DATA_TYPE(XS_DATE_TIME,            xs:dateTime,           char*,    string) 
 ADD_DATA_TYPE(XS_DURATION,             xs:duration,           uint32_t, string)
 
 
-#define ASSERT1(expression, result, error)        \
-{                                                 \
-  if(!(expression))                               \
-  {                                               \
-    result = error;                               \
-    return NULL;                                  \
-  }                                               \
-}
 
-#define ASSERT2(expression) if(!(expression)) return NULL
+#define ASSERT3(expression, error_code) if(!(expression)) return error_code
+
 
 #define ALL_XML_CONTENT_TYPES       \
   ADD_CONTENT(EN_NO_XML_DATA_TYPE, XML element does not hold the content)    \
@@ -87,12 +80,6 @@ typedef enum
 /*
  *  -------------------------------- STRUCTURE --------------------------------
  */
-
-typedef struct
-{
-  char* String;   // This pointer can not be const because this can be created dynamically.
-  size_t Length;
-}string_t;
 
 typedef struct
 {
@@ -169,8 +156,8 @@ typedef struct
 /*
  *  ---------------------------- EXPORTED FUNCTION ----------------------------
  */
-extern const char* extract_content(const xml_content_t* const content,
+extern xml_parse_result_t extract_content(const xml_content_t* const content,
                             void* target, const char* source,
-                            char token);
+                            size_t length);
 
 #endif // XML_CONTENT_H

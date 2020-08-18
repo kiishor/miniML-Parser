@@ -122,19 +122,28 @@ static inline void* get_target_address(const target_address_t* const address,
 
 static inline const char* parse_attribute(const xs_attribute_t* const attribute,
                                           const char* source, void* target,
+                                          xml_parse_result_t* const result,
                                           void** context)
 {
   source = skip_whitespace(source);
-  ASSERT2(source != NULL);
-  ASSERT2(*source++ == '=');
+  ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
+  ASSERT1((*source++ == '='), *result, XML_SYNTAX_ERROR);
 
   source = skip_whitespace(source);
-  ASSERT2(source != NULL);
-  ASSERT2(*source++ == '"');
+  ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
+  ASSERT1((*source++ == '"'), *result, XML_SYNTAX_ERROR);
 
-  return extract_content(&attribute->Content,
-                         get_target_address(&attribute->Target, target, 0, context),
-                         source, '"');
+  const char* const tag = source;
+  source = strchr(source, '"');
+  ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
+  size_t length = source++ - tag;
+
+  *result = extract_content(&attribute->Content,
+                   get_target_address(&attribute->Target, target, 0, context),
+                   tag, length);
+
+  ASSERT2(*result == XML_PARSE_SUCCESS);
+  return source;
 }
 
 static inline xml_parse_result_t validate_attributes(const xs_element_t* const element,
@@ -149,7 +158,6 @@ static inline xml_parse_result_t validate_attributes(const xs_element_t* const e
   }
   return XML_PARSE_SUCCESS;
 }
-
 
 static inline xml_parse_result_t validate_empty_element(const xs_element_t* const element)
 {
@@ -175,18 +183,17 @@ static inline const char* validate_element(const xs_element_t* const element,
 {
   const char* const tag = source;
   source = extract_element_tag(source);
-  ASSERT1((source != NULL), *result, XML_SYNTAX_ERROR);
+  ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
   size_t length = source - tag;
 
   ASSERT1((length == element->Name.Length) &&
      (strncmp(element->Name.String, tag, length) == 0), *result, XML_END_TAG_NOT_FOUND)
 
   source = skip_whitespace(source);
-  ASSERT1((source != NULL), *result, XML_SYNTAX_ERROR);
+  ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
   ASSERT1((*source++ == '>'), *result, XML_SYNTAX_ERROR);
   return source;
 }
-
 
 static inline const char* parse_element(const xs_element_t* const element,
                                                const char* source, void* target,
@@ -204,7 +211,7 @@ static inline const char* parse_element(const xs_element_t* const element,
   while(1)
   {
     source = skip_whitespace(source);
-    ASSERT1((source != NULL), *result, XML_SOURCE_STRING_END_ERR);
+    ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
 
     switch(*source)
     {
@@ -228,14 +235,19 @@ static inline const char* parse_element(const xs_element_t* const element,
       }
       else if(element->Content.Type != EN_NO_XML_DATA_TYPE)
       {
-        source = extract_content(&element->Content, target, source, '<');
-        ASSERT1(source != NULL, *result, XML_CONTENT_ERROR);
+        const char* const tag = source;
+        source = strchr(source, '<');
+        ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
+        size_t length = source++ - tag;
+
+        *result = extract_content(&element->Content, target, tag, length);
+        ASSERT2(result == XML_PARSE_SUCCESS);
         ASSERT1(*source++ == '/', *result, XML_SYNTAX_ERROR);
       }
       else
       {
         source = skip_whitespace(source);
-        ASSERT1(source != NULL, *result, XML_SYNTAX_ERROR);
+        ASSERT1(source != NULL, *result, XML_INCOMPLETE_SOURCE);
         ASSERT1(*source++ == '<', *result, XML_SYNTAX_ERROR);
         ASSERT1(*source++ == '/', *result, XML_SYNTAX_ERROR);
       }
@@ -246,7 +258,7 @@ static inline const char* parse_element(const xs_element_t* const element,
 
     const char* const tag = source;
     source = extract_attribute_tag(source);
-    ASSERT1(source != NULL, *result, XML_SOURCE_STRING_END_ERR);
+    ASSERT1(source != NULL, *result, XML_INCOMPLETE_SOURCE);
     size_t length = source - tag;
     uint32_t i = 0;
     while(1)
@@ -257,8 +269,8 @@ static inline const char* parse_element(const xs_element_t* const element,
         ASSERT1(!occurrence[i], *result, XML_DUPLICATE_ATTRIBUTE);
 
         occurrence[i] = true;
-        source = parse_attribute(&element->Attribute[i], source, target, context);
-        ASSERT1(source != NULL, *result, XML_SYNTAX_ERROR);
+        source = parse_attribute(&element->Attribute[i], source, target, result, context);
+        ASSERT2(source != NULL);
         attribute_occurred++;
         break;
       }
@@ -266,6 +278,22 @@ static inline const char* parse_element(const xs_element_t* const element,
       ASSERT1(++i < element->Attribute_Quantity, *result, XML_ATTRIBUTE_NOT_FOUND);
     }
   }
+}
+
+static inline bool validate_choice_order(uint32_t* occurrence, size_t quantity)
+{
+  uint32_t count = 0;
+  for(uint32_t i = 0; i < quantity; i++)
+  {
+    if(occurrence[i])
+    {
+      if(++count > 1)
+      {
+        return false;   // More than one child elements found
+      }
+    }
+  }
+  return true;
 }
 
 static inline const char* parse_parent_element(const xs_element_t* const parent,
@@ -286,7 +314,7 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
   while(1)
   {
     source = skip_whitespace(source);
-    ASSERT1(source != NULL, *result, XML_SOURCE_STRING_END_ERR);
+    ASSERT1(source != NULL, *result, XML_INCOMPLETE_SOURCE);
     ASSERT1(*source++ == '<', *result, XML_INVALID_START_TOKEN_ERR);
 
     switch(*source)
@@ -294,7 +322,7 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
     case '?':
     case '!':
       source = strchr(source, '>');
-      ASSERT1(source != NULL, *result, XML_SOURCE_STRING_END_ERR);
+      ASSERT1(source != NULL, *result, XML_INCOMPLETE_SOURCE);
       source++;
       continue;
 
@@ -309,39 +337,28 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
 
     const char* const tag = source;
     source = extract_element_tag(source);
-    ASSERT1(source != NULL, *result, XML_SOURCE_STRING_END_ERR);
+    ASSERT1(source != NULL, *result, XML_INCOMPLETE_SOURCE);
     size_t length = source - tag;
 
-    switch(parent->Child_Type)
+    if(parent->Child_Order != EN_SEQUENCE)
     {
-    case EN_CHOICE:
       element_index = 0;
-      while(1)
+    }
+    while(1)
+    {
+      if((length == parent->Child[element_index].Name.Length) &&
+        (strncmp(tag, parent->Child[element_index].Name.String, length) == 0))
       {
-        if((length == parent->Child[element_index].Name.Length) &&
-          (strncmp(tag, parent->Child[element_index].Name.String, length) == 0))
-        {
-          break;
-        }
-
-        ASSERT1(++element_index < parent->Child_Quantity, *result, XML_ELEMENT_NOT_FOUND_ERR);
+        break;
       }
-      break;
 
-    case EN_SEQUENCE:
-      while(1)
+      if(parent->Child_Order == EN_SEQUENCE)
       {
-        if((length == parent->Child[element_index].Name.Length) &&
-          (strncmp(tag, parent->Child[element_index].Name.String, length) == 0))
-        {
-          break;
-        }
-
         ASSERT1(occurrence[element_index] >= parent->Child[element_index].MinOccur,
                 *result, XML_ELEMENT_MIN_OCCURRENCE_ERR);
-        ASSERT1(++element_index < parent->Child_Quantity, *result, XML_ELEMENT_NOT_FOUND_ERR);
       }
-      break;
+
+      ASSERT1(++element_index < parent->Child_Quantity, *result, XML_ELEMENT_NOT_FOUND_ERR);
     }
 
     const xs_element_t* const element = &parent->Child[element_index];
@@ -349,6 +366,10 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
                                       occurrence[element_index], context);
 
     ASSERT1(++occurrence[element_index] <= element->MaxOccur, *result, XML_ELEMENT_MAX_OCCURRENCE_ERR)
+    if(parent->Child_Order == EN_CHOICE)
+    {
+      ASSERT1(validate_choice_order(occurrence, parent->Child_Quantity), *result, XML_CHOICE_ELEMENT_ERR);
+    }
 
     source = parse_element(element, source, target, result, context);
     ASSERT2(source != NULL);
