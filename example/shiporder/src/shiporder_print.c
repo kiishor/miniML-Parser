@@ -6,6 +6,7 @@
 
 void print_shiporder(void)
 {
+    printf("orderid: %s\n", shiporder.orderid);
     printf("orderperson: %s\n", shiporder.orderperson);
     printf("name: %s\n", shiporder.shipto.name);
     printf("address: %s\n", shiporder.shipto.address);

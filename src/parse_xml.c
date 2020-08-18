@@ -241,7 +241,7 @@ static inline const char* parse_element(const xs_element_t* const element,
         size_t length = source++ - tag;
 
         *result = extract_content(&element->Content, target, tag, length);
-        ASSERT2(result == XML_PARSE_SUCCESS);
+        ASSERT2(*result == XML_PARSE_SUCCESS);
         ASSERT1(*source++ == '/', *result, XML_SYNTAX_ERROR);
       }
       else
