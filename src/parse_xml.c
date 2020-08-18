@@ -142,7 +142,7 @@ static inline const char* parse_attribute(const xs_attribute_t* const attribute,
                    get_target_address(&attribute->Target, target, 0, context),
                    tag, length);
 
-  ASSERT3(*result == XML_PARSE_SUCCESS);
+  ASSERT2(*result == XML_PARSE_SUCCESS);
   return source;
 }
 
@@ -219,19 +219,19 @@ static inline const char* parse_element(const xs_element_t* const element,
       source++;
       ASSERT1((*source++ == '>'), *result, XML_SYNTAX_ERROR);
       *result = validate_attributes(element, occurrence);
-      ASSERT3(*result == XML_PARSE_SUCCESS);
+      ASSERT2(*result == XML_PARSE_SUCCESS);
       *result = validate_empty_element(element);
-      ASSERT3(*result == XML_PARSE_SUCCESS);
+      ASSERT2(*result == XML_PARSE_SUCCESS);
       return source;
 
     case '>':
       *result = validate_attributes(element, occurrence);
-      ASSERT3(*result == XML_PARSE_SUCCESS);
+      ASSERT2(*result == XML_PARSE_SUCCESS);
       source++;
       if(element->Child_Quantity > 0)
       {
         source = parse_parent_element(element, source, target, result, context);
-        ASSERT3(source != NULL);
+        ASSERT2(source != NULL);
       }
       else if(element->Content.Type != EN_NO_XML_DATA_TYPE)
       {
@@ -241,7 +241,7 @@ static inline const char* parse_element(const xs_element_t* const element,
         size_t length = source++ - tag;
 
         *result = extract_content(&element->Content, target, tag, length);
-        ASSERT3(result == XML_PARSE_SUCCESS);
+        ASSERT2(result == XML_PARSE_SUCCESS);
         ASSERT1(*source++ == '/', *result, XML_SYNTAX_ERROR);
       }
       else
@@ -270,7 +270,7 @@ static inline const char* parse_element(const xs_element_t* const element,
 
         occurrence[i] = true;
         source = parse_attribute(&element->Attribute[i], source, target, result, context);
-        ASSERT3(source != NULL);
+        ASSERT2(source != NULL);
         attribute_occurred++;
         break;
       }
@@ -372,7 +372,7 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
     }
 
     source = parse_element(element, source, target, result, context);
-    ASSERT3(source != NULL);
+    ASSERT2(source != NULL);
 
     if(element->Callback)
     {

@@ -101,8 +101,8 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   }
 
   case EN_CHAR_ARRAY:
-    ASSERT2((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
-    ASSERT2((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
+    ASSERT3((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
+    ASSERT3((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
 
     memcpy(target, source, length);
     ((char*)target)[length] = '\0';
@@ -110,11 +110,11 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
 
   case EN_STRING_DYNAMIC:
   {
-    ASSERT2((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
-    ASSERT2((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
+    ASSERT3((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
+    ASSERT3((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
 
     char* data = (char*)malloc(length);
-    ASSERT2(data!= NULL, FAILED_TO_ALLOCATE_MEMORY);
+    ASSERT3(data!= NULL, FAILED_TO_ALLOCATE_MEMORY);
     memcpy(data, source, length);
     data[length] = '\0';
     (*(char**)target) = data;
@@ -124,8 +124,8 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   case EN_UNSIGNED:
   {
     uint32_t value = strtoul(source, NULL, 10);
-    ASSERT2((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR);
-    ASSERT2((value <= content->Facet.Uint.MaxValue), XML_MAX_VALUE_ERROR);
+    ASSERT3((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR);
+    ASSERT3((value <= content->Facet.Uint.MaxValue), XML_MAX_VALUE_ERROR);
     (*(uint32_t*)target) = value;
   }
   break;
@@ -133,8 +133,8 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   case EN_DECIMAL:
   {
     float value = strtof(source, NULL);
-    ASSERT2((value >= content->Facet.Decimal.MinValue), XML_MIN_VALUE_ERROR);
-    ASSERT2((value <= content->Facet.Decimal.MaxValue), XML_MAX_VALUE_ERROR);
+    ASSERT3((value >= content->Facet.Decimal.MinValue), XML_MIN_VALUE_ERROR);
+    ASSERT3((value <= content->Facet.Decimal.MaxValue), XML_MAX_VALUE_ERROR);
     (*(float*)target) = value;
   }
   break;

@@ -10,6 +10,20 @@
  */
 
 /*
+ *  ------------------------------- DEFINITION -------------------------------
+ */
+#define ASSERT1(expression, result, error)        \
+{                                                 \
+  if(!(expression))                               \
+  {                                               \
+    result = error;                               \
+    return NULL;                                  \
+  }                                               \
+}
+
+#define ASSERT2(expression) if(!(expression)) return NULL
+
+/*
  *  ------------------------------- ENUMERATION -------------------------------
  */
 //! List of result code of \ref parse_xml
