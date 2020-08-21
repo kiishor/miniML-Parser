@@ -17,6 +17,22 @@
 #include "parse_xml.h"
 
 /*
+ *  ------------------------------- DEFINITION -------------------------------
+ */
+//! Assert the expression. if fails write error to the result and returns NULL.
+#define ASSERT1(expression, result, error)        \
+{                                                 \
+  if(!(expression))                               \
+  {                                               \
+    result = error;                               \
+    return NULL;                                  \
+  }                                               \
+}
+
+//! Assert the expression. If fails returns NULL.
+#define ASSERT2(expression) if(!(expression)) return NULL
+
+/*
  *	--------------------------- FORWARD DECLARATION ---------------------------
  */
 
@@ -29,6 +45,14 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
 
+/** \brief This function skips/ignore all the whitespace chars
+ *         till it reaches to non-whitespace char or end of string.
+ *
+ * \param source const char* Source : string to skip whitespace
+ * \return const char*  Address of first non-whitespace char in the string or
+ *                      NULL on end of string
+ *
+ */
 static inline const char* skip_whitespace(const char* source)
 {
   do
@@ -51,7 +75,13 @@ static inline const char* skip_whitespace(const char* source)
   }while(1);
 }
 
-static inline const char* extract_element_tag(const char* source)
+/** \brief gets the elements end tag ('>' or '/>').
+ *
+ * \param source const char* : Source XML string to find element end tag
+ * \return const char* : returns the address of end tag or NULL on end of string.
+ *
+ */
+static inline const char* get_element_end_tag(const char* source)
 {
   while(1)
   {
@@ -76,7 +106,13 @@ static inline const char* extract_element_tag(const char* source)
   }
 }
 
-static inline const char* extract_attribute_tag(const char* source)
+/** \brief returns the end of attribute tag.
+ *
+ * \param source const char* : Source of XMl string to find end of attribute tag
+ * \return const char* : returns end of attribute tag or NULL on end of string.
+ *
+ */
+static inline const char* get_attribute_tag(const char* source)
 {
   while(1)
   {
@@ -100,9 +136,18 @@ static inline const char* extract_attribute_tag(const char* source)
   }
 }
 
+/** \brief Get the target address to store XML content based on address type.
+ *
+ * \param address const target_address_t*const : target address type.
+ * \param target void* : parent element target address. Used only in relative type of target address
+ * \param occurrence uint32_t : occurrence of element in the XMl.
+ * \param context void** : user defined context. used only in dynamic type of target address.
+ * \return void* : Returns the target address to store XML content.
+ *
+ */
 static inline void* get_target_address(const target_address_t* const address,
-                                        void* target, uint32_t occurrence,
-                                        void** context)
+                                       void* target, uint32_t occurrence,
+                                       void** context)
 {
   switch(address->Type)
   {
@@ -120,6 +165,18 @@ static inline void* get_target_address(const target_address_t* const address,
   }
 }
 
+/** \brief Parses XML attribute and extracts the content of attribute
+ *
+ * \param attribute const xs_attribute_t*const : Structure defining XML attribute to parse.
+ * \param source const char* : Source XML to parse and extract the content of attribute
+ * \param target void* : Target address to store XMl content
+ * \param result xml_parse_result_t* const : pointer to store the result of parsing.
+ * \param context void** : User defined context.
+ * \return const char* : XML source string.
+ *         If parsing is successful it next character after the parsed attribute.
+ *         Otherwise NULL.
+ *
+ */
 static inline const char* parse_attribute(const xs_attribute_t* const attribute,
                                           const char* source, void* target,
                                           xml_parse_result_t* const result,
@@ -146,8 +203,14 @@ static inline const char* parse_attribute(const xs_attribute_t* const attribute,
   return source;
 }
 
-static inline xml_parse_result_t validate_attributes(const xs_element_t* const element,
-                                                     const bool* const occurrence)
+/** \brief Verify that all the required attributes occurred in the XML element.
+ *
+ * \param element const xs_element_t* const : XML element to verify
+ * \param occurrence const bool*const : Occurrence table of attribute
+ * \return xml_parse_result_t result of validation.
+ *
+ */
+static inline xml_parse_result_t validate_attributes(const xs_element_t* const element, const bool* const occurrence)
 {
   for(uint32_t i = 0; i < element->Attribute_Quantity; i++)
   {
@@ -159,6 +222,12 @@ static inline xml_parse_result_t validate_attributes(const xs_element_t* const e
   return XML_PARSE_SUCCESS;
 }
 
+/** \brief Validate the empty element.
+ *
+ * \param element const xs_element_t*const : element to validate.
+ * \return xml_parse_result_t result of validation.
+ *
+ */
 static inline xml_parse_result_t validate_empty_element(const xs_element_t* const element)
 {
   for(uint32_t i = 0; i < element->Child_Quantity; i++)
@@ -177,12 +246,18 @@ static inline xml_parse_result_t validate_empty_element(const xs_element_t* cons
   return XML_PARSE_SUCCESS;
 }
 
-static inline const char* validate_element(const xs_element_t* const element,
-                                           const char* source,
-                                           xml_parse_result_t* const result)
+/** \brief validate the XML element.
+ *
+ * \param element const xs_element_t* const : element to validate.
+ * \param source const char* : XML source string.
+ * \param result xml_parse_result_t* const : stores the result of element validation
+ * \return const char* : if validation is successful return XML source string otherwise NULL.
+ *
+ */
+static inline const char* validate_element(const xs_element_t* const element, const char* source, xml_parse_result_t* const result)
 {
   const char* const tag = source;
-  source = extract_element_tag(source);
+  source = get_element_end_tag(source);
   ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
   size_t length = source - tag;
 
@@ -257,7 +332,7 @@ static inline const char* parse_element(const xs_element_t* const element,
     ASSERT1(attribute_occurred != element->Attribute_Quantity, *result, XML_SYNTAX_ERROR);
 
     const char* const tag = source;
-    source = extract_attribute_tag(source);
+    source = get_attribute_tag(source);
     ASSERT1(source != NULL, *result, XML_INCOMPLETE_SOURCE);
     size_t length = source - tag;
     uint32_t i = 0;
@@ -336,7 +411,7 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
     }
 
     const char* const tag = source;
-    source = extract_element_tag(source);
+    source = get_element_end_tag(source);
     ASSERT1(source != NULL, *result, XML_INCOMPLETE_SOURCE);
     size_t length = source - tag;
 
