@@ -17,6 +17,11 @@
 
 #include "parse_xml.h"
 
+/*
+ *  ------------------------------- DEFINITION -------------------------------
+ */
+//! Asserts the expression. if fails return the function with error_code.
+#define ASSERT3(expression, error_code) if(!(expression)) return error_code
 
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
