@@ -27,6 +27,16 @@
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
 
+/** \brief Helper function to extract content of xs:date or xs:time depending on passed tokens.
+ * To extract xs:date content pass "YMD"and to extract xs:time pass "HMS" as token.
+ *
+ * \param source const char* : Source of XML content
+ * \param end const char*const : end of XML content.
+ * \param pToken const char* : Array of tokens to extract the content of .
+ * \param pTarget uint32_t* : Target address to store the extracted content.
+ * \return bool : return true if extraction is successful otherwise false.
+ *
+ */
 static inline bool get_duration_content(const char* source, const char* const end,
                                         const char* pToken, uint32_t* pTarget)
 {
@@ -53,8 +63,15 @@ static inline bool get_duration_content(const char* source, const char* const en
   return true;
 }
 
-static inline xml_parse_result_t get_duration(const char* source, const char* const end,
-                                xs_duration_t* const duration)
+/** \brief Extracts the xs:duration from XML content.
+ *
+ * \param source const char* : XML content source.
+ * \param end const char*const : end of XML content.
+ * \param duration xs_duration_t* const : pointer to store xs:duration.
+ * \return xml_parse_result_t : Result of operation.
+ *
+ */
+static inline xml_parse_result_t get_duration(const char* source, const char* const end, xs_duration_t* const duration)
 {
   duration->Sign = true;
   if(*source == '-')

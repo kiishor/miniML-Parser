@@ -210,7 +210,8 @@ static inline const char* parse_attribute(const xs_attribute_t* const attribute,
  * \return xml_parse_result_t result of validation.
  *
  */
-static inline xml_parse_result_t validate_attributes(const xs_element_t* const element, const bool* const occurrence)
+static inline xml_parse_result_t validate_attributes(const xs_element_t* const element,
+                                                     const bool* const occurrence)
 {
   for(uint32_t i = 0; i < element->Attribute_Quantity; i++)
   {
@@ -246,7 +247,7 @@ static inline xml_parse_result_t validate_empty_element(const xs_element_t* cons
   return XML_PARSE_SUCCESS;
 }
 
-/** \brief validate the XML element.
+/** \brief validate the XML element. Check for matching end element tag.
  *
  * \param element const xs_element_t* const : element to validate.
  * \param source const char* : XML source string.
@@ -254,7 +255,9 @@ static inline xml_parse_result_t validate_empty_element(const xs_element_t* cons
  * \return const char* : if validation is successful return XML source string otherwise NULL.
  *
  */
-static inline const char* validate_element(const xs_element_t* const element, const char* source, xml_parse_result_t* const result)
+static inline const char* validate_element(const xs_element_t* const element,
+                                           const char* source,
+                                           xml_parse_result_t* const result)
 {
   const char* const tag = source;
   source = get_element_end_tag(source);
@@ -270,10 +273,21 @@ static inline const char* validate_element(const xs_element_t* const element, co
   return source;
 }
 
+/** \brief parses a XML string to extract attribute and its content as specified
+ *         in the given xs_element_t
+ *
+ * \param element const xs_element_t*const : Contain schema definition of an element.
+ * \param source const char* : XML source to parse
+ * \param target void* : Target address to store content.
+ * \param result xml_parse_result_t* const : pointer to write the result of parsing.
+ * \param context void** : User specified context.
+ * \return const char* : returns XML source if parsing is successful otherwise NULL.
+ *
+ */
 static inline const char* parse_element(const xs_element_t* const element,
-                                               const char* source, void* target,
-                                               xml_parse_result_t* const result,
-                                               void** context)
+                                        const char* source, void* target,
+                                        xml_parse_result_t* const result,
+                                        void** context)
 {
   bool occurrence[element->Attribute_Quantity];
   uint32_t attribute_occurred = 0;
@@ -355,6 +369,15 @@ static inline const char* parse_element(const xs_element_t* const element,
   }
 }
 
+/** \brief Validate that in case of child element order is specified as choice then
+ * only element must contain only one child element.(Though it can have multiple
+ * occurrence of that element as specified in the maxOccur)
+ *
+ * \param occurrence uint32_t* : pointer to array of occurrence table
+ * \param quantity size_t : Number of child elements
+ * \return bool : return true if only on child element occurred otherwise false.
+ *
+ */
 static inline bool validate_choice_order(uint32_t* occurrence, size_t quantity)
 {
   uint32_t count = 0;
@@ -371,6 +394,18 @@ static inline bool validate_choice_order(uint32_t* occurrence, size_t quantity)
   return true;
 }
 
+/** \brief Parses a XML source to extract child elements from parent element
+ * as specified in the xs_element_t schema.
+ *
+ * \param parent const xs_element_t*const : Schema of parent element
+ * \param source const char* : XML source to parse
+ * \param parent_target void* : Target address of parent element. It is used for
+ * for calculating the target address of child element if it's address type is relative.
+ * \param result xml_parse_result_t* const : Stores the result of parsing.
+ * \param context void** : User specified context.
+ * \return const char* : returns pointer XML source if parsing is successful otherwise NULL.
+ *
+ */
 static inline const char* parse_parent_element(const xs_element_t* const parent,
                                                const char* source,
                                                void* parent_target,
