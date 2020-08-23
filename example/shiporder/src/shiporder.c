@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <float.h>
+#include <stddef.h>
 
 #include "shiporder.h"
 
@@ -51,8 +52,8 @@ static const xs_element_t item_descendant[] =
     [3].Target.Type    = EN_RELATIVE,
     [3].Target.Offset  = offsetof(item_t, price),
     [3].Content.Type   = EN_DECIMAL,
-    [3].Content.Facet.Decimal.MinValue = -3.40282e+038,
-    [3].Content.Facet.Decimal.MaxValue = 3.40282e+038,
+    [3].Content.Facet.Decimal.MinValue = -3.40282e+038f,
+    [3].Content.Facet.Decimal.MaxValue = 3.40282e+038f,
 };
 
 static const xs_element_t shipto_descendant[] =
@@ -162,7 +163,7 @@ static const xs_attribute_t shiporder_attribute[] =
     [2].Use         = EN_REQUIRED,
 };
 
-const xs_element_t root_descendant[] =
+static const xs_element_t root_descendant[] =
 {
     [0].Name.String = "shiporder",
     [0].Name.Length = 9,
