@@ -21,13 +21,14 @@
  */
 //! Assert the expression. if fails write error to the result and returns NULL.
 #define ASSERT1(expression, result, error)        \
-{                                                 \
+do {                                              \
   if(!(expression))                               \
   {                                               \
     result = error;                               \
     return NULL;                                  \
   }                                               \
-}
+}while(0)
+
 
 //! Assert the expression. If fails returns NULL.
 #define ASSERT2(expression) if(!(expression)) return NULL
@@ -152,13 +153,13 @@ static inline void* get_target_address(const target_address_t* const address,
   switch(address->Type)
   {
   case EN_STATIC:
-    return address->Address + (occurrence * address->Size);
+    return (void*)((uint32_t)(address->Address) + (occurrence * address->Size));
 
   case EN_DYNAMIC:
     return address->Allocate(occurrence, context);
 
   case EN_RELATIVE:
-    return target + (occurrence * address->Size) + address->Offset;
+    return (void*)((uint32_t)(target) + (occurrence * address->Size) + address->Offset);
 
   default:
     return NULL;
@@ -265,7 +266,7 @@ static inline const char* validate_element(const xs_element_t* const element,
   size_t length = source - tag;
 
   ASSERT1((length == element->Name.Length) &&
-     (strncmp(element->Name.String, tag, length) == 0), *result, XML_END_TAG_NOT_FOUND)
+     (strncmp(element->Name.String, tag, length) == 0), *result, XML_END_TAG_NOT_FOUND);
 
   source = skip_whitespace(source);
   ASSERT1((source != NULL), *result, XML_INCOMPLETE_SOURCE);
@@ -439,7 +440,7 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
     case '/':
       for(uint32_t i = 0; i < parent->Child_Quantity; i++)
       {
-        ASSERT1(occurrence[i] >= parent->Child[i].MinOccur, *result, XML_ELEMENT_MIN_OCCURRENCE_ERR)
+        ASSERT1(occurrence[i] >= parent->Child[i].MinOccur, *result, XML_ELEMENT_MIN_OCCURRENCE_ERR);
       }
       *result = XML_PARSE_SUCCESS;
       return ++source;
@@ -475,7 +476,7 @@ static inline const char* parse_parent_element(const xs_element_t* const parent,
     void* target = get_target_address(&element->Target, parent_target,
                                       occurrence[element_index], context);
 
-    ASSERT1(++occurrence[element_index] <= element->MaxOccur, *result, XML_ELEMENT_MAX_OCCURRENCE_ERR)
+    ASSERT1(++occurrence[element_index] <= element->MaxOccur, *result, XML_ELEMENT_MAX_OCCURRENCE_ERR);
     if(parent->Child_Order == EN_CHOICE)
     {
       ASSERT1(validate_choice_order(occurrence, parent->Child_Quantity), *result, XML_CHOICE_ELEMENT_ERR);

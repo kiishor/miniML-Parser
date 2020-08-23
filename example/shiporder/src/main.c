@@ -20,7 +20,7 @@
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
-extern void print_shiporder();
+extern void print_shiporder(void);
 
 int main(int argc, char *argv[])
 {
