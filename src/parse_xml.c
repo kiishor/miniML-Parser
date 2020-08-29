@@ -9,6 +9,7 @@
 /*
  *  ------------------------------ INCLUDE FILES ------------------------------
  */
+
 #include <stdint.h>
 #include <string.h>
 #include <stdbool.h>
@@ -19,6 +20,7 @@
 /*
  *  ------------------------------- DEFINITION -------------------------------
  */
+
 //! Assert the expression.
 #define ASSERT(expression, error)   \
 do {                                \
@@ -32,10 +34,15 @@ do {                                \
 #define ASSERT_RESULT(function)           \
 do {                                      \
   xml_parse_result_t result = function;   \
-  if(result != XML_PARSE_SUCCESS)         \
-  {                                       \
-    return result;                        \
-  }                                       \
+  ASSERT(result == XML_PARSE_SUCCESS, result);   \
+}while(0)
+
+//! Skips the white space till it finds the token
+#define ASSERT_TOKEN(source, token)                 \
+do {                                                \
+  source = skip_whitespace(source);                 \
+  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);  \
+  ASSERT((*source++ == token), XML_SYNTAX_ERROR);     \
 }while(0)
 
 /*
@@ -46,7 +53,6 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
                                                       const char** input,
                                                       void* parent_target,
                                                       void** context);
-
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
@@ -251,9 +257,7 @@ static inline xml_parse_result_t validate_element(const xs_element_t* const elem
   ASSERT((length == element->Name.Length) &&
      (strncmp(element->Name.String, tag, length) == 0), XML_END_TAG_NOT_FOUND);
 
-  source = skip_whitespace(source);
-  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);
-  ASSERT((*source++ == '>'), XML_SYNTAX_ERROR);
+  ASSERT_TOKEN(source, '>');
   *input = source;
   return XML_PARSE_SUCCESS;
 }
@@ -270,13 +274,10 @@ static inline xml_parse_result_t parse_attribute(const xs_attribute_t* const att
                                                  const char** input, void* target,
                                                  void** context)
 {
-  const char* source = skip_whitespace(*input);
-  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);
-  ASSERT((*source++ == '='), XML_SYNTAX_ERROR);
+  const char* source = *input;
 
-  source = skip_whitespace(source);
-  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);
-  ASSERT((*source++ == '"'), XML_SYNTAX_ERROR);
+  ASSERT_TOKEN(source, '=');
+  ASSERT_TOKEN(source, '"');
 
   const char* const tag = source;
   source = strchr(source, '"');
@@ -348,9 +349,7 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
         }
         else
         {
-          source = skip_whitespace(source);
-          ASSERT(source != NULL, XML_INCOMPLETE_SOURCE);
-          ASSERT(*source++ == '<', XML_SYNTAX_ERROR);
+          ASSERT_TOKEN(source, '<');
           ASSERT(*source++ == '/', XML_SYNTAX_ERROR);
         }
         *input = source;
@@ -411,9 +410,7 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
 
   while(1)
   {
-    source = skip_whitespace(source);
-    ASSERT(source != NULL, XML_INCOMPLETE_SOURCE);
-    ASSERT(*source++ == '<', XML_INVALID_START_TOKEN_ERR);
+    ASSERT_TOKEN(source, '<');
 
     switch(*source)
     {
@@ -483,16 +480,7 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
   }
 }
 
-#ifndef PARTIAL_PARSING
 xml_parse_result_t parse_xml(const xs_element_t* root, const char* source, void** context)
 {
   return parse_parent_element(root, &source, NULL, context);
 }
-
-#else
-
-xml_parse_result_t parse_xml(const xs_element_t* root, const xml_source_t* source, void** context)
-{
-  return parse_parent_element(root, (const char**)source, NULL, context);
-}
-#endif // PARTIAL_PARSING
