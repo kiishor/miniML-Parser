@@ -12,7 +12,6 @@
 /*
  *  ------------------------------- ENUMERATION -------------------------------
  */
-//#define PARTIAL_PARSING
 
 //! List of result code of \ref parse_xml
 typedef enum
@@ -84,6 +83,7 @@ typedef enum
 /*
  *  -------------------------------- STRUCTURE --------------------------------
  */
+
 //! A simple structure for string data type.
 typedef struct
 {
@@ -108,13 +108,6 @@ typedef void (*element_callback)(uint32_t occurrence, void* const content, void*
  */
 typedef void* (*allocate)(uint32_t occurrence, void** context);
 
-typedef const char* (*get_source)(void** context);
-
-typedef struct
-{
-  const char* Buffer;
-  get_source Get;
-}xml_source_t;
 
 //! Structure to holds/allocate the target address to store XML content
 typedef struct
@@ -146,7 +139,7 @@ typedef struct
 {
   string_t Name;            //!< Name of attribute
   target_address_t Target;  //!< Target address to store the content of attribute
-  xml_content_t Content;    //!< Content type of attribtue
+  xml_content_t Content;    //!< Content type of attribute
   xs_attribute_use_t Use;   //!< Use of attribute required, optional or prohibited.
 }xs_attribute_t;
 
@@ -164,7 +157,7 @@ struct xs_element_t
   xml_content_t Content;    //!< Content type of an element
 
   uint32_t Attribute_Quantity;      //!< Number of attributes in the element
-  const xs_attribute_t* Attribute;  //!< Address to array of attribtues
+  const xs_attribute_t* Attribute;  //!< Address to array of attributes
 
   uint32_t Child_Quantity;          //!< Number of child elements of an element
   child_order_type_t Child_Order;   //!< order type of child elements
@@ -174,7 +167,7 @@ struct xs_element_t
 /*
  *  ---------------------------- EXPORTED FUNCTION ----------------------------
  */
-#ifndef PARTIAL_PARSING
+
 /** \brief XML parser to parse XML file.
  *
  * \param root const xs_element_t*: pointer to root element of XML element tree.
@@ -188,10 +181,5 @@ struct xs_element_t
  */
 extern xml_parse_result_t parse_xml(const xs_element_t* root, const char* source,
                                      void** context);
-#else
-extern xml_parse_result_t parse_xml(const xs_element_t* root, const xml_source_t* source,
-                                     void** context);
-#endif // PARTIAL_PARSING
-
 #endif // PARSE_XML_H
 
