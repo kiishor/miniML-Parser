@@ -73,10 +73,10 @@
 	<stdlib.h>
 	"parse_xml.h"
 
-1597760452 c:\project\xml_code_generator\src\xml_parser\src\parse_xml.h
+1598358388 c:\project\xml_code_generator\src\xml_parser\src\parse_xml.h
 	"xml_content.h"
 
-1597760452 c:\project\xml_code_generator\src\xml_parser\src\xml_content.h
+1598188266 c:\project\xml_code_generator\src\xml_parser\src\xml_content.h
 	<stdbool.h>
 
 1597760452 source:c:\project\xml_code_generator\src\xml_parser\src\xml_content.c
