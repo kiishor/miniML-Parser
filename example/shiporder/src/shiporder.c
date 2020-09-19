@@ -15,7 +15,6 @@ static const xs_element_t item_descendant[] =
     [0].Name.Length = 5,
     [0].MinOccur    = 1,
     [0].MaxOccur    = 1,
-    [0].Callback    = NULL,
     [0].Target.Type    = EN_RELATIVE,
     [0].Target.Offset  = offsetof(item_t, title),
     [0].Content.Type   = EN_STRING_DYNAMIC,
@@ -26,7 +25,6 @@ static const xs_element_t item_descendant[] =
     [1].Name.Length = 4,
     [1].MinOccur    = 0,
     [1].MaxOccur    = 1,
-    [1].Callback    = NULL,
     [1].Target.Type    = EN_RELATIVE,
     [1].Target.Offset  = offsetof(item_t, note),
     [1].Content.Type   = EN_STRING_DYNAMIC,
@@ -37,7 +35,6 @@ static const xs_element_t item_descendant[] =
     [2].Name.Length = 8,
     [2].MinOccur    = 1,
     [2].MaxOccur    = 1,
-    [2].Callback    = NULL,
     [2].Target.Type    = EN_RELATIVE,
     [2].Target.Offset  = offsetof(item_t, quantity),
     [2].Content.Type   = EN_UNSIGNED,
@@ -48,7 +45,6 @@ static const xs_element_t item_descendant[] =
     [3].Name.Length = 5,
     [3].MinOccur    = 1,
     [3].MaxOccur    = 1,
-    [3].Callback    = NULL,
     [3].Target.Type    = EN_RELATIVE,
     [3].Target.Offset  = offsetof(item_t, price),
     [3].Content.Type   = EN_DECIMAL,
@@ -62,7 +58,6 @@ static const xs_element_t shipto_descendant[] =
     [0].Name.Length = 4,
     [0].MinOccur    = 1,
     [0].MaxOccur    = 1,
-    [0].Callback    = NULL,
     [0].Target.Type    = EN_RELATIVE,
     [0].Target.Offset  = offsetof(shipto_t, name),
     [0].Content.Type   = EN_STRING_DYNAMIC,
@@ -73,7 +68,6 @@ static const xs_element_t shipto_descendant[] =
     [1].Name.Length = 7,
     [1].MinOccur    = 1,
     [1].MaxOccur    = 1,
-    [1].Callback    = NULL,
     [1].Target.Type    = EN_RELATIVE,
     [1].Target.Offset  = offsetof(shipto_t, address),
     [1].Content.Type   = EN_STRING_DYNAMIC,
@@ -84,7 +78,6 @@ static const xs_element_t shipto_descendant[] =
     [2].Name.Length = 4,
     [2].MinOccur    = 1,
     [2].MaxOccur    = 1,
-    [2].Callback    = NULL,
     [2].Target.Type    = EN_RELATIVE,
     [2].Target.Offset  = offsetof(shipto_t, city),
     [2].Content.Type   = EN_STRING_DYNAMIC,
@@ -95,7 +88,6 @@ static const xs_element_t shipto_descendant[] =
     [3].Name.Length = 7,
     [3].MinOccur    = 1,
     [3].MaxOccur    = 1,
-    [3].Callback    = NULL,
     [3].Target.Type    = EN_RELATIVE,
     [3].Target.Offset  = offsetof(shipto_t, country),
     [3].Content.Type   = EN_STRING_DYNAMIC,
@@ -103,7 +95,7 @@ static const xs_element_t shipto_descendant[] =
     [3].Content.Facet.String.MaxLength = 4294967295,
 };
 
-static void* allocate_item(uint32_t occurrence, void** context);
+static void* allocate_item(uint32_t occurrence);
 
 static const xs_element_t shiporder_descendant[] =
 {
@@ -111,7 +103,6 @@ static const xs_element_t shiporder_descendant[] =
     [0].Name.Length = 11,
     [0].MinOccur    = 1,
     [0].MaxOccur    = 1,
-    [0].Callback    = NULL,
     [0].Target.Type    = EN_RELATIVE,
     [0].Target.Offset  = offsetof(shiporder_t, orderperson),
     [0].Content.Type   = EN_STRING_DYNAMIC,
@@ -122,7 +113,6 @@ static const xs_element_t shiporder_descendant[] =
     [1].Name.Length = 6,
     [1].MinOccur    = 1,
     [1].MaxOccur    = 1,
-    [1].Callback    = NULL,
     [1].Target.Type    = EN_RELATIVE,
     [1].Target.Offset  = offsetof(shiporder_t, shipto),
     [1].Content.Type   = EN_NO_XML_DATA_TYPE,
@@ -134,7 +124,6 @@ static const xs_element_t shiporder_descendant[] =
     [2].Name.Length = 4,
     [2].MinOccur    = 1,
     [2].MaxOccur    = 4294967295,
-    [2].Callback    = NULL,
     [2].Target.Type    = EN_DYNAMIC,
     [2].Target.Allocate = allocate_item,
     [2].Content.Type   = EN_NO_XML_DATA_TYPE,
@@ -169,7 +158,6 @@ static const xs_element_t root_descendant[] =
     [0].Name.Length = 9,
     [0].MinOccur    = 1,
     [0].MaxOccur    = 1,
-    [0].Callback    = NULL,
     [0].Target.Type    = EN_STATIC,
     [0].Target.Address = &shiporder,
     [0].Content.Type   = EN_NO_XML_DATA_TYPE,
@@ -187,7 +175,7 @@ const xs_element_t xml_root =
     .Child          = root_descendant,
 };
 
-static void* allocate_item(uint32_t occurrence, void** context)
+static void* allocate_item(uint32_t occurrence)
 {
     void* const target = calloc(sizeof(item_t), 1);
     if(shiporder.item == NULL)
