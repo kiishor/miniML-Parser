@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   fread(xml, 1, (size_t)size, fXml);
   fclose(fXml);
 
-  xml_parse_result_t result = parse_xml(&xml_root, xml, NULL);
+  xml_parse_result_t result = parse_xml(&xml_root, xml);
   if(result == XML_PARSE_SUCCESS)
   {
     printf("Parsing completed successfully\n");
