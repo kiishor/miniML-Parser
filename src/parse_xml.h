@@ -10,6 +10,18 @@
  */
 
 /*
+ *  ------------------------------- DEFINITION -------------------------------
+ */
+
+#ifndef XML_PARSER_CONTEXT
+  #define XML_PARSER_CONTEXT 0
+#endif // XML_PARSER_CONTEXT
+
+#ifndef XML_PARSER_CALLBACK
+  #define XML_PARSER_CALLBACK 0
+#endif // XML_PARSER_CALLBACK
+
+/*
  *  ------------------------------- ENUMERATION -------------------------------
  */
 
@@ -91,14 +103,19 @@ typedef struct
   size_t Length;  //!< Length of string.
 }string_t;
 
+#if XML_PARSER_CALLBACK
 /** A function pointer to trigger callback on successful parsing of element.
  *
  * \param occurrence uint32_t : The current occurrence count of the element in the XML
  * \param content void* const : Address containing content of element
  * \param context void**      : Context passed to xml parser.
  */
-typedef void (*element_callback)(uint32_t occurrence, void* const content, void** context);
-
+#if XML_PARSER_CONTEXT
+  typedef void (*element_callback)(uint32_t occurrence, void* const content, void** context);
+#else
+  typedef void (*element_callback)(uint32_t occurrence, void* const content);
+#endif // XML_PARSER_CONTEXT
+#endif // XML_PARSER_CALLBACK
 
 /** A function pointer to allocate dynamic memory to store content of element.
  *
@@ -106,8 +123,11 @@ typedef void (*element_callback)(uint32_t occurrence, void* const content, void*
  * \param context void**      : Context passed to xml parser.
  * \return void*              : Target address to store xml content
  */
-typedef void* (*allocate)(uint32_t occurrence, void** context);
-
+#if XML_PARSER_CONTEXT
+  typedef void* (*allocate)(uint32_t occurrence, void** context);
+#else
+  typedef void* (*allocate)(uint32_t occurrence);
+#endif // XML_PARSER_CONTEXT
 
 //! Structure to holds/allocate the target address to store XML content
 typedef struct
@@ -151,7 +171,10 @@ struct xs_element_t
   string_t Name;        //!< Name of an element
   uint32_t MinOccur;    //!< Minimum number of time element must occur
   uint32_t MaxOccur;    //!< Maximum number of time element is allowed to occur
+
+#if XML_PARSER_CALLBACK
   element_callback Callback;  //!< Callback after successful parsing of an element.
+#endif // XML_PARSER_CALLBACK
 
   target_address_t Target;  //!< Target address to store content of an element
   xml_content_t Content;    //!< Content type of an element
@@ -179,7 +202,10 @@ struct xs_element_t
  * \return extern xml_parse_result_t result of XML parsing.
  *
  */
-extern xml_parse_result_t parse_xml(const xs_element_t* root, const char* source,
-                                     void** context);
+extern xml_parse_result_t parse_xml(const xs_element_t* root, const char* source
+                                   #if XML_PARSER_CONTEXT
+                                     , void** context
+                                   #endif // XML_PARSER_CONTEXT
+                                   );
 #endif // PARSE_XML_H
 
