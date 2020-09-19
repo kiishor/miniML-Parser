@@ -34,6 +34,7 @@
 			<Add directory="../../../src/includes" />
 			<Add directory="../../../src" />
 		</Compiler>
+		<Unit filename="../../../README.md" />
 		<Unit filename="../../../src/parse_xml.c">
 			<Option compilerVar="CC" />
 		</Unit>
