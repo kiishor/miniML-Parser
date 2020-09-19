@@ -66,31 +66,32 @@
 	<stdio.h>
 	"shiporder.h"
 
-1597767541 source:c:\project\xml_code_generator\src\xml_parser\src\parse_xml.c
+1599373446 source:c:\project\xml_code_generator\src\xml_parser\src\parse_xml.c
 	<stdint.h>
 	<string.h>
 	<stdbool.h>
 	<stdlib.h>
 	"parse_xml.h"
 
-1598358388 c:\project\xml_code_generator\src\xml_parser\src\parse_xml.h
+1598685795 c:\project\xml_code_generator\src\xml_parser\src\parse_xml.h
 	"xml_content.h"
 
 1598188266 c:\project\xml_code_generator\src\xml_parser\src\xml_content.h
 	<stdbool.h>
 
-1597760452 source:c:\project\xml_code_generator\src\xml_parser\src\xml_content.c
+1598188266 source:c:\project\xml_code_generator\src\xml_parser\src\xml_content.c
 	<stdint.h>
 	<string.h>
 	<stdbool.h>
 	<stdlib.h>
 	"parse_xml.h"
 
-1597501320 source:c:\project\xml_code_generator\src\xml_parser\example\shiporder\src\main.c
+1599373912 source:c:\project\xml_code_generator\src\xml_parser\example\shiporder\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdint.h>
 	<stdbool.h>
+	<assert.h>
 	"shiporder.h"
 
 1597766924 c:\project\xml_code_generator\src\xml_parser\example\shiporder\src\shiporder.h
@@ -98,10 +99,11 @@
 	<stdbool.h>
 	"parse_xml.h"
 
-1597766924 source:c:\project\xml_code_generator\src\xml_parser\example\shiporder\src\shiporder.c
+1598194970 source:c:\project\xml_code_generator\src\xml_parser\example\shiporder\src\shiporder.c
 	<stdlib.h>
 	<stdbool.h>
 	<float.h>
+	<stddef.h>
 	"shiporder.h"
 
 1597766924 source:c:\project\xml_code_generator\src\xml_parser\example\shiporder\src\shiporder_print.c
