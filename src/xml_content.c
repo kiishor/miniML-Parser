@@ -191,10 +191,8 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   return XML_ENUM_NOT_FOUND;
 
   case EN_DURATION:
-  {
     return get_duration(source, source + length, target);
-  }
-  break;
+
 
   default:
     return XML_CONTENT_UNSUPPORTED;

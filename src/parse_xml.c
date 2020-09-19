@@ -160,13 +160,13 @@ static inline void* get_target_address(const target_address_t* const address,
   switch(address->Type)
   {
   case EN_STATIC:
-    return (void*)((uint32_t)(address->Address) + (occurrence * address->Size));
+    return (void*)((size_t)(address->Address) + (occurrence * address->Size));
 
   case EN_DYNAMIC:
     return address->Allocate(occurrence, context);
 
   case EN_RELATIVE:
-    return (void*)((uint32_t)(target) + (occurrence * address->Size) + address->Offset);
+    return (void*)((size_t)(target) + (occurrence * address->Size) + address->Offset);
 
   default:
     return NULL;

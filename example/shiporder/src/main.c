@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <assert.h>
 
 #include "shiporder.h"
 
@@ -39,11 +40,12 @@ int main(int argc, char *argv[])
   }
 
   fseek(fXml, 0, SEEK_END);
-  size_t size = ftell(fXml);
+  long size = ftell(fXml);
+  assert(size > 0);
   fseek(fXml, 0, SEEK_SET);
 
-  char* const xml = malloc(size);
-  fread(xml, 1, size, fXml);
+  char* const xml = malloc((size_t)size);
+  fread(xml, 1, (size_t)size, fXml);
   fclose(fXml);
 
   xml_parse_result_t result = parse_xml(&xml_root, xml, NULL);
