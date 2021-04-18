@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+ <xs:element name="food">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element type="xs:string" name="name"/>
+        <xs:element type="xs:float" name="price"/>
+        <xs:element type="xs:string" name="description"/>
+        <xs:element type="xs:unsignedInt" name="calories"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

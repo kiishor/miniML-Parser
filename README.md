@@ -1,16 +1,30 @@
 XML Parser in C
 ===============
 
-A simple and small XML parser library in C. It is specifically developed for embedded applications in mind.
+A simple and tiny XML parser library in C. It is specifically developed for embedded applications in mind.
 
 - It is extremely easy to use: You need to call only one API to parse your XML data
-- It is very small: The parser uses only 1.8 kB[1] of code memory. Hence you can use it in very small embedded applications.
+- It has a very small footprint: The parser uses only 1.8 kB[^1] of code memory. Hence, you can use it in very small embedded applications.
 - It is a validating XML parser.
 - It also extracts the content of XML data and converts it to its specified data type.
+- It comes with a tool to generate the source code from XML schema file, instead of manually writing XML tree structure in C.
 
->[1]: Compiled in IAR ARM 8.50.4 compiler in release mode. 
+>[^1]: Compiled in IAR ARM 8.50.4 compiler in release mode.
 
-## How it works
+This is a validating XML parser, uses [xs_element_t](#xs_element_t) structure based on XML schema to validate the given XML string.
+[xs_element_t](#xs_element_t) contains all the tree structure of XML elements and elements properties such as element name, its child elements, attributes, content type, etc..
+A user can either manually create or use [XML code generator tool](#xml-code-generator-tool) to generate [xs_element_t](#xs_element_t) structure in C from XML schema file. 
+This is a command line tool to that takes schema file as input and generates c source code containing.
+
+The Parser contains four files
+- parse_xml.c   : XML parser source file
+- parse_xml.h   : XML parser header file
+- xml_content.c : XML content extractor source file (used by XML parser internally to extract the XML content).
+- xml_content.h : XML content extractor header file
+
+## Quick start guide
+
+This is a simple XML data that user wants to parse.
 
 ```XML
 <food>
@@ -21,27 +35,7 @@ A simple and small XML parser library in C. It is specifically developed for emb
 </food>
 ```
 
-You have simple XML data as shown above that you want to parse and extract the content to below structure.
-
-```C
-struct food_t
-{
-    char* name;
-    float price;
-    char* description;
-    unsigned int calories;
-};
-```
-
-You can call \ref parse_xml API and pass XML data and instance of xs_element_t of root element.
-
-```C 
-  xml_parse_result_t result = parse_xml(&food_root, xml_source);
-```
-
-`food_root` is an instance of `xs_element_t` structure that represents XML root element food. `xs_element_t` represent the XML element like element name, its child elements, attributes, content type, etc..
-It is equivalent to XML schema. For every XML element, you need to define an instance of xs_element_t. They also need to be structured similarly to tree structure of XML elements.
-
+This is a XML schema for the above XML data.
 ```XML
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -57,42 +51,65 @@ It is equivalent to XML schema. For every XML element, you need to define an ins
   </xs:element>
 </xs:schema>
 ```
+And the user wants to extract the XML data into below C structure.
 
-Why does parser uses xs_element_t for validation instead of directly using XML schema?
- - Using XML schema directly costs more code space compare to xs_element_t
- - Parser also needs to parse XML schema that also adds the cost to performance.
- 
-## XML code generator tool
+```C
+struct food_t
+{
+    char* name;
+    float price;
+    char* description;
+    unsigned int calories;
+};
+```
 
-Creating the xs_element_t tree structure manually is cumbersome, hence the parser also provides an xml_code_generator tool that generates this for the user.
-This tools generates the xs_element_t tree structure from XML schema. It also generates the structure of food_t to store the extracted data.
+Call `parse_xml` API, pass XML data and instance of [xs_element_t](#xs_element_t) of root element.
+
+```C
+  xml_parse_result_t result = parse_xml(&xml_root, xml_source);
+```
+
+- [xml_root](example/food/src/food.c) is an instance of [xs_element_t](#xs_element_t) structure that represents XML root element.
+  [xs_element_t](#xs_element_t) also holds the address to store the extracted XML data.
+- `xml_source` NULL terminated (char*) string containing XML data to parse.
+
+`parse_xml` function parses the XML string, validate it against the XML schema and extract XML content.
+This parser doesn't contain any static or non-local variables, hence it doesn't need any initialization function.
+It also doesn't use heap/dynamic memory for extracting the XML content.
+It's a [pure function](1) without having any [side effects](2).
+
+### Callbacks from parser
+User can specify optional callback in the [xs_element_t](#xs_element_t). 
+This is useful for complex use cases,
+ - Where user wants to perform some action after parsing an XML element
+ - Allocate/deallocate memory to store extracted contents.
+
+## XML Code generator tool
+
+Creating the [xs_element_t](#xs_element_t) tree structure manually is cumbersome, hence the parser also provides an xml_code_generator tool that generates xs_element_t tree structure for the user.
+This tools generates the xs_element_t tree structure from XML schema. It also generates the structure to store the extracted data.
 
 ```shell
 xml_code_generator.exe food.xsd
 ```
 
 The tool generates three files
-- **food.c** :    This file contains xs_element_t tree structure generated from schema. It also contains `food_t food;` to store the XML content.
-    
-- **food.h** : This file contains food_t structure created from schema to store the content of XML.
-    
-- **food_print.c** : Generates the printf functions to print the content of food_t to console.
+- [food.c](example/food/src/food.c)             : This file contains xs_element_t tree structure generated from schema. It also declare `food_t food;` to store the XML content.
+- [food.h](example/food/src/food.h)             : This file contains food_t structure created from schema to store the content of XML.
+- [food_print.c](example/food/src/food_print.c) : Generates the printf functions to print the content of food_t to console.
 
 include food.h file in you source file and call parse_xml api as shown below.
-```C 
+
+```C
   xml_parse_result_t result = parse_xml(&food_root, xml_source);
 ```
 
-- food_root: It is an instance of xs_element_t of root element defined in the food.c 
-- xml_source: NULL terminated string containing XML data to parse.
-
 For most of the cases you only need XMl schema and the tool will generate all the required code to parse an XML data.
 
-## parse_xml
+## xs_element_t
 
-### xs_element_t
-
-This structure represent xml schema element for the parser. 
+This structure represent xml schema element for the parser. It is equivalent to XML schema.
+For every XML element, you need to define an instance of xs_element_t. They also need to be structured similarly to tree structure of XML elements.
 
 ```C
 //! Structure to define element of XML
@@ -117,8 +134,13 @@ struct xs_element_t
 
 - `string_t Name;` represents name of element
 - `uint32_t MinOccur` & `uint32_t MaxOccur;` represents XSD occurrence indicators minOccurs & maxOccurs.
-- `element_callback Callback;` Callback after successful parsing of an element. Parser calls this callback after completion end tag of an element. 
+- `element_callback Callback;` Callback after successful parsing of an element. Parser calls this callback after completion end tag of an element.
 
- for more details refer Doxygen documentation. 
-   
+ for more details refer Doxygen documentation.
 
+### More
+For reporting issues/bugs or requesting features use GitHub issue tracker
+
+
+[1]: https://en.wikipedia.org/wiki/Pure_function
+[2]: https://en.wikipedia.org/wiki/Side_effect_(computer_science)
