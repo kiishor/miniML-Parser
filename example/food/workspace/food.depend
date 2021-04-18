@@ -1,0 +1,42 @@
+# depslib dependency file v1.0
+1618746596 source:c:\project\xml_parser_in_c\example\food\src\food.c
+	<stdlib.h>
+	<stdbool.h>
+	<float.h>
+	"food.h"
+
+1618680497 c:\project\xml_parser_in_c\example\food\src\food.h
+	<stdint.h>
+	<stdbool.h>
+	"parse_xml.h"
+
+1612200043 c:\project\xml_parser_in_c\src\parse_xml.h
+	"xml_content.h"
+
+1612200043 c:\project\xml_parser_in_c\src\xml_content.h
+	<stdbool.h>
+
+1612200043 source:c:\project\xml_parser_in_c\src\parse_xml.c
+	<stdint.h>
+	<string.h>
+	<stdbool.h>
+	<stdlib.h>
+	"parse_xml.h"
+
+1612200043 source:c:\project\xml_parser_in_c\src\xml_content.c
+	<stdint.h>
+	<string.h>
+	<stdbool.h>
+	<stdlib.h>
+	"parse_xml.h"
+
+1618680497 source:c:\project\xml_parser_in_c\example\food\src\food_print.c
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	"food.h"
+
+1618746520 source:c:\project\xml_parser_in_c\example\food\src\main.c
+	<stdio.h>
+	"food.h"
+
