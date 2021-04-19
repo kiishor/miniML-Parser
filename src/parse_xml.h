@@ -13,10 +13,12 @@
  *  ------------------------------- DEFINITION -------------------------------
  */
 
+ //! By default context is disabled
 #ifndef XML_PARSER_CONTEXT
   #define XML_PARSER_CONTEXT 0
 #endif // XML_PARSER_CONTEXT
 
+//! By default parser callbacks are disabled.
 #ifndef XML_PARSER_CALLBACK
   #define XML_PARSER_CALLBACK 0
 #endif // XML_PARSER_CALLBACK
