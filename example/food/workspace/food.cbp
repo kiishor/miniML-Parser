@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="food" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/food" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/food" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="../src" />
+			<Add directory="../../../src" />
+		</Compiler>
+		<Unit filename="../../../src/parse_xml.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/parse_xml.h" />
+		<Unit filename="../../../src/xml_content.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../src/xml_content.h" />
+		<Unit filename="../src/food.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/food.h" />
+		<Unit filename="../src/food_print.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../src/main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
