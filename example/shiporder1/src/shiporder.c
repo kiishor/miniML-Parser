@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <float.h>
+#include <stdio.h>
 
 #include "shiporder.h"
 
@@ -102,8 +103,8 @@ static const xs_element_t shipto_descendant[] =
     [3].Content.Facet.String.MaxLength = 4294967295,
 };
 
-static void* allocate_item(uint32_t occurrence, void** context);
-void deallocate_item(uint32_t occurrence, void* const content, void** context);
+static void* allocate_item(uint32_t occurrence);
+static void deallocate_item(uint32_t occurrence, void* const content);
 
 static const xs_element_t shiporder_descendant[] =
 {
@@ -133,7 +134,7 @@ static const xs_element_t shiporder_descendant[] =
     [2].Name.String = "item",
     [2].Name.Length = 4,
     [2].MinOccur    = 1,
-    [2].MaxOccur    = 4294967295,
+    [2].MaxOccur    = 10,
     [2].Callback    = deallocate_item,
     [2].Target.Type    = EN_DYNAMIC,
     [2].Target.Allocate = allocate_item,
@@ -187,12 +188,12 @@ const xs_element_t xml_root =
     .Child          = root_descendant,
 };
 
-static void* allocate_item(uint32_t occurrence, void** context)
+static void* allocate_item(uint32_t occurrence)
 {
   return calloc(sizeof(item_t), 1);
 }
 
-void deallocate_item(uint32_t occurrence, void* const content, void** context)
+void deallocate_item(uint32_t occurrence, void* const content)
 {
   item_t* item = (item_t*)content;
   printf("title: %s\n", item->title);
