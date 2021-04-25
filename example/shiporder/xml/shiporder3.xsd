@@ -42,11 +42,11 @@
   <xs:sequence>
     <xs:element name="orderperson" type="stringtype"/>
     <xs:element name="shipto" type="shiptotype"/>
-    <xs:element name="item" maxOccurs="unbounded" type="itemtype"/>
+    <xs:element name="item" maxOccurs="10" type="itemtype"/>
   </xs:sequence>
   <xs:attribute name="orderid" type="orderidtype" use="required"/>
 </xs:complexType>
 
 <xs:element name="shiporder" type="shipordertype"/>
 
-</xs:schema> 
+</xs:schema>
