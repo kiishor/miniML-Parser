@@ -110,10 +110,10 @@ typedef struct
  *
  * \param occurrence uint32_t : The current occurrence count of the element in the XML
  * \param content void* const : Address containing content of element
- * \param context void**      : Context passed to xml parser.
+ * \param context void*      : Context passed to xml parser.
  */
 #if XML_PARSER_CONTEXT
-  typedef void (*element_callback)(uint32_t occurrence, void* const content, void** context);
+  typedef void (*element_callback)(uint32_t occurrence, void* const content, void* context);
 #else
   typedef void (*element_callback)(uint32_t occurrence, void* const content);
 #endif // XML_PARSER_CONTEXT
@@ -122,11 +122,11 @@ typedef struct
 /** A function pointer to allocate dynamic memory to store content of element.
  *
  * \param occurrence uint32_t : The current occurrence count of the element in the XML
- * \param context void**      : Context passed to xml parser.
+ * \param context void*      : Context passed to xml parser.
  * \return void*              : Target address to store xml content
  */
 #if XML_PARSER_CONTEXT
-  typedef void* (*allocate)(uint32_t occurrence, void** context);
+  typedef void* (*allocate)(uint32_t occurrence, void* context);
 #else
   typedef void* (*allocate)(uint32_t occurrence);
 #endif // XML_PARSER_CONTEXT
@@ -197,7 +197,7 @@ struct xs_element_t
  *
  * \param root const xs_element_t*: pointer to root element of XML element tree.
  * \param source const char*      : buffer containing XML source to parse.
- * \param context void**          : User defined context.
+ * \param context void*          : User defined context.
  *        Parser doesn't use/modify this argument for parsing purpose.
  *        It passes this context in all the callback functions.
  *        If not required pass NULL.
@@ -206,7 +206,7 @@ struct xs_element_t
  */
 extern xml_parse_result_t parse_xml(const xs_element_t* root, const char* source
                                    #if XML_PARSER_CONTEXT
-                                     , void** context
+                                     , void* context
                                    #endif // XML_PARSER_CONTEXT
                                    );
 #endif // PARSE_XML_H
