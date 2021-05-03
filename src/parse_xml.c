@@ -53,7 +53,7 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
                                                       const char** input,
                                                       void* parent_target
                                                     #if XML_PARSER_CONTEXT
-                                                      , void** context
+                                                      , void* context
                                                     #endif // XML_PARSER_CONTEXT
                                                       );
 /*
@@ -153,13 +153,13 @@ static inline const char* get_attribute_tag(const char* source)
  * \param address const target_address_t*const : target address type.
  * \param target void* : parent element target address. Used only in relative type of target address
  * \param occurrence uint32_t : occurrence of element in the XMl.
- * \param context void** : user defined context. used only in dynamic type of target address.
+ * \param context void* : user defined context. used only in dynamic type of target address.
  * \return void* : Returns the target address to store XML content.
  */
 static inline void* get_target_address(const target_address_t* const address,
                                        void* target, uint32_t occurrence
                                      #if XML_PARSER_CONTEXT
-                                       , void** context
+                                       , void* context
                                      #endif // XML_PARSER_CONTEXT
                                        )
 {
@@ -277,13 +277,13 @@ static inline xml_parse_result_t validate_element(const xs_element_t* const elem
  * \param attribute const xs_attribute_t*const : Structure defining XML attribute to parse.
  * \param input const char** : input XML string to parse and extract the content of attribute
  * \param target void* : Target address to store XMl content
- * \param context void** : User defined context.
+ * \param context void* : User defined context.
  * \return xml_parse_result_t result of parsing
  */
 static inline xml_parse_result_t parse_attribute(const xs_attribute_t* const attribute,
                                                  const char** input, void* target
                                                #if XML_PARSER_CONTEXT
-                                                 , void** context
+                                                 , void* context
                                                #endif // XML_PARSER_CONTEXT
                                                  )
 {
@@ -312,13 +312,13 @@ static inline xml_parse_result_t parse_attribute(const xs_attribute_t* const att
  * \param element const xs_element_t*const : Contain schema definition of an element.
  * \param input const char** : Input XML string to parse
  * \param target void* : Target address to store XML content.
- * \param context void** : User specified context.
+ * \param context void* : User specified context.
  * \return xml_parse_result_t : result of parsing.
  */
 static inline xml_parse_result_t parse_element(const xs_element_t* const element,
                                                const char** input, void* target
                                              #if XML_PARSER_CONTEXT
-                                               , void** context
+                                               , void* context
                                              #endif // XML_PARSER_CONTEXT
                                                )
 {
@@ -419,14 +419,14 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
  * \param input const char** : input XML string to parse
  * \param parent_target void* : Target address of parent element. It is used for
  * for calculating the target address of child element if it's address type is relative.
- * \param context void** : User specified context.
+ * \param context void* : User specified context.
  * \return xml_parse_result_t : result of parsing.
  */
 static inline xml_parse_result_t parse_parent_element(const xs_element_t* const parent,
                                                       const char** input,
                                                       void* parent_target
                                                     #if XML_PARSER_CONTEXT
-                                                      , void** context
+                                                      , void* context
                                                     #endif // XML_PARSER_CONTEXT
                                                       )
 {
@@ -527,7 +527,7 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
 }
 
 #if XML_PARSER_CONTEXT
-xml_parse_result_t parse_xml(const xs_element_t* root, const char* source, void** context)
+xml_parse_result_t parse_xml(const xs_element_t* root, const char* source, void* context)
 {
   return parse_parent_element(root, &source, NULL, context);
 }
