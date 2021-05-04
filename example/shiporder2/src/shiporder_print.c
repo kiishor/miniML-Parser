@@ -4,7 +4,7 @@
 
 #include "shiporder.h"
 
-void print_shiporder(void)
+void print_shiporder(size_t itemQuantity)
 {
     printf("orderid: %s\n", shiporder.orderid);
     printf("orderperson: %s\n", shiporder.orderperson);
@@ -13,7 +13,7 @@ void print_shiporder(void)
     printf("city: %s\n", shiporder.shipto.city);
     printf("country: %s\n", shiporder.shipto.country);
 
-    for(uint32_t i = 0; i < 10; i++)
+    for(uint32_t i = 0; i < itemQuantity; i++)
     {
         printf("title: %s\n", shiporder.item[i].title);
         printf("note: %s\n", shiporder.item[i].note);
