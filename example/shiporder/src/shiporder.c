@@ -123,7 +123,7 @@ static const xs_element_t shiporder_descendant[] =
     [2].Name.String = "item",
     [2].Name.Length = 4,
     [2].MinOccur    = 1,
-    [2].MaxOccur    = 4294967295,
+    [2].MaxOccur    = 10,
     [2].Target.Type    = EN_DYNAMIC,
     [2].Target.Allocate = allocate_item,
     [2].Content.Type   = EN_NO_XML_DATA_TYPE,
@@ -168,7 +168,7 @@ static const xs_element_t root_descendant[] =
     [0].Child          = shiporder_descendant,
 };
 
-const xs_element_t xml_root =
+const xs_element_t shiporder_root =
 {
     .Child_Quantity = 1,
     .Child_Order    = EN_CHOICE,

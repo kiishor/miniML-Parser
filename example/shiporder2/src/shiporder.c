@@ -5,6 +5,8 @@
 #include "shiporder.h"
 
 
+extern void itemCallback(uint32_t occurrence, void* const content, void* context);
+
 shiporder_t shiporder;
 
 
@@ -131,7 +133,7 @@ static const xs_element_t shiporder_descendant[] =
     [2].Name.Length = 4,
     [2].MinOccur    = 1,
     [2].MaxOccur    = 10,
-    [2].Callback    = NULL,
+    [2].Callback    = itemCallback,
     [2].Target.Type    = EN_RELATIVE,
     [2].Target.Offset  = offsetof(shiporder_t, item),
     [2].Target.Size    = sizeof(item_t),
@@ -178,9 +180,10 @@ static const xs_element_t root_descendant[] =
     [0].Child          = shiporder_descendant,
 };
 
-const xs_element_t xml_root =
+const xs_element_t shiporder_root =
 {
     .Child_Quantity = 1,
     .Child_Order    = EN_CHOICE,
     .Child          = root_descendant,
 };
+
