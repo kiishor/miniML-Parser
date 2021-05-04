@@ -181,7 +181,7 @@ static const xs_element_t root_descendant[] =
     [0].Child          = shiporder_descendant,
 };
 
-const xs_element_t xml_root =
+const xs_element_t shiporder_root =
 {
     .Child_Quantity = 1,
     .Child_Order    = EN_CHOICE,

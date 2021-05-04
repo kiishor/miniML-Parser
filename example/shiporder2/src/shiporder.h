@@ -32,6 +32,6 @@ typedef struct
 
 extern shiporder_t shiporder;
 
-extern const xs_element_t xml_root;
+extern const xs_element_t shiporder_root;
 
 #endif

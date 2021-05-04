@@ -21,7 +21,13 @@
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
-extern void print_shiporder(void);
+extern void print_shiporder(size_t itemQuantity);
+
+void itemCallback(uint32_t occurrence, void* const content, void* context)
+{
+  uint32_t* itemQuantity = context;
+  *itemQuantity = occurrence;
+}
 
 int main(int argc, char *argv[])
 {
@@ -48,11 +54,12 @@ int main(int argc, char *argv[])
   fread(xml, 1, (size_t)size, fXml);
   fclose(fXml);
 
-  xml_parse_result_t result = parse_xml(&xml_root, xml, NULL);
+  uint32_t itemQuantity = 0;
+  xml_parse_result_t result = parse_xml(&shiporder_root, xml, &itemQuantity);
   if(result == XML_PARSE_SUCCESS)
   {
     printf("Parsing completed successfully\n");
-    print_shiporder();
+    print_shiporder(itemQuantity);
   }
   else
   {
