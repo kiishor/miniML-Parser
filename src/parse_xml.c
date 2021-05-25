@@ -45,6 +45,14 @@ do {                                                \
   ASSERT((*source++ == token), XML_SYNTAX_ERROR);     \
 }while(0)
 
+#if XML_PARSER_CONTEXT
+  #define CONTEXT_PTR , void* context
+  #define CONTEXT_ARG , context
+#else
+  #define CONTEXT_PTR
+  #define CONTEXT_ARG
+#endif // XML_PARSER_CONTEXT
+
 /*
  *	--------------------------- FORWARD DECLARATION ---------------------------
  */
@@ -52,9 +60,7 @@ do {                                                \
 static inline xml_parse_result_t parse_parent_element(const xs_element_t* const parent,
                                                       const char** input,
                                                       void* parent_target
-                                                    #if XML_PARSER_CONTEXT
-                                                      , void* context
-                                                    #endif // XML_PARSER_CONTEXT
+                                                      CONTEXT_PTR
                                                       );
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
@@ -158,10 +164,7 @@ static inline const char* get_attribute_tag(const char* source)
  */
 static inline void* get_target_address(const target_address_t* const address,
                                        void* target, uint32_t occurrence
-                                     #if XML_PARSER_CONTEXT
-                                       , void* context
-                                     #endif // XML_PARSER_CONTEXT
-                                       )
+                                       CONTEXT_PTR)
 {
   switch(address->Type)
   {
@@ -169,11 +172,7 @@ static inline void* get_target_address(const target_address_t* const address,
     return (void*)((size_t)(address->Address) + (occurrence * address->Size));
 
   case EN_DYNAMIC:
-  #if XML_PARSER_CONTEXT
-    return address->Allocate(occurrence, context);
-  #else
-    return address->Allocate(occurrence);
-  #endif // XML_PARSER_CONTEXT
+    return address->Allocate(occurrence CONTEXT_ARG);
 
   case EN_RELATIVE:
     return (void*)((size_t)(target) + (occurrence * address->Size) + address->Offset);
@@ -282,10 +281,7 @@ static inline xml_parse_result_t validate_element(const xs_element_t* const elem
  */
 static inline xml_parse_result_t parse_attribute(const xs_attribute_t* const attribute,
                                                  const char** input, void* target
-                                               #if XML_PARSER_CONTEXT
-                                                 , void* context
-                                               #endif // XML_PARSER_CONTEXT
-                                                 )
+                                                 CONTEXT_PTR)
 {
   const char* source = *input;
 
@@ -298,11 +294,7 @@ static inline xml_parse_result_t parse_attribute(const xs_attribute_t* const att
   size_t length = source++ - tag;
   *input = source;
   return extract_content(&attribute->Content,
-                 #if XML_PARSER_CONTEXT
-                   get_target_address(&attribute->Target, target, 0, context),
-                 #else
-                   get_target_address(&attribute->Target, target, 0),
-                 #endif // XML_PARSER_CONTEXT
+                   get_target_address(&attribute->Target, target, 0 CONTEXT_ARG),
                    tag, length);
 }
 
@@ -317,10 +309,7 @@ static inline xml_parse_result_t parse_attribute(const xs_attribute_t* const att
  */
 static inline xml_parse_result_t parse_element(const xs_element_t* const element,
                                                const char** input, void* target
-                                             #if XML_PARSER_CONTEXT
-                                               , void* context
-                                             #endif // XML_PARSER_CONTEXT
-                                               )
+                                               CONTEXT_PTR)
 {
   bool occurrence[element->Attribute_Quantity];
   uint32_t attribute_occurred = 0;
@@ -354,11 +343,7 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
         if(element->Child_Quantity > 0)
         {
           *input = source;
-        #if XML_PARSER_CONTEXT
-          ASSERT_RESULT(parse_parent_element(element, input, target, context));
-        #else
-          ASSERT_RESULT(parse_parent_element(element, input, target));
-        #endif // XML_PARSER_CONTEXT
+          ASSERT_RESULT(parse_parent_element(element, input, target CONTEXT_ARG));
           source = *input;
         }
         else if(element->Content.Type != EN_NO_XML_DATA_TYPE)
@@ -397,11 +382,7 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
 
         occurrence[i] = true;
         *input = source;
-      #if XML_PARSER_CONTEXT
-        ASSERT_RESULT(parse_attribute(&element->Attribute[i], input, target, context));
-      #else
-        ASSERT_RESULT(parse_attribute(&element->Attribute[i], input, target));
-      #endif // XML_PARSER_CONTEXT
+        ASSERT_RESULT(parse_attribute(&element->Attribute[i], input, target CONTEXT_ARG));
         source = *input;
         attribute_occurred++;
         break;
@@ -425,10 +406,7 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
 static inline xml_parse_result_t parse_parent_element(const xs_element_t* const parent,
                                                       const char** input,
                                                       void* parent_target
-                                                    #if XML_PARSER_CONTEXT
-                                                      , void* context
-                                                    #endif // XML_PARSER_CONTEXT
-                                                      )
+                                                      CONTEXT_PTR)
 {
   uint32_t occurrence[parent->Child_Quantity];
   uint32_t element_index = 0;
@@ -488,11 +466,7 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
 
     const xs_element_t* const element = &parent->Child[element_index];
     void* target = get_target_address(&element->Target, parent_target,
-                                    #if XML_PARSER_CONTEXT
-                                      occurrence[element_index], context);
-                                    #else
-                                      occurrence[element_index]);
-                                    #endif // XML_PARSER_CONTEXT
+                                      occurrence[element_index] CONTEXT_ARG);
 
     ASSERT(++occurrence[element_index] <= element->MaxOccur, XML_ELEMENT_MAX_OCCURRENCE_ERR);
     if(parent->Child_Order == EN_CHOICE)
@@ -501,20 +475,12 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
     }
 
     *input = source;
-  #if XML_PARSER_CONTEXT
-    ASSERT_RESULT(parse_element(element, input, target, context));
-  #else
-    ASSERT_RESULT(parse_element(element, input, target));
-  #endif // XML_PARSER_CONTEXT
+    ASSERT_RESULT(parse_element(element, input, target CONTEXT_ARG));
 
   #if XML_PARSER_CALLBACK
     if(element->Callback)
     {
-    #if XML_PARSER_CONTEXT
-      element->Callback(occurrence[element_index], target, context);
-    #else
-      element->Callback(occurrence[element_index], target);
-    #endif // XML_PARSER_CONTEXT
+      element->Callback(occurrence[element_index], target CONTEXT_ARG);
     }
   #endif // XML_PARSER_CALLBACK
 
@@ -526,14 +492,14 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
   }
 }
 
-#if XML_PARSER_CONTEXT
-xml_parse_result_t parse_xml(const xs_element_t* root, const char* source, void* context)
+xml_parse_result_t parse_xml(const xs_element_t* root, const char* source
+                             CONTEXT_PTR)
 {
-  return parse_parent_element(root, &source, NULL, context);
+  const xs_element_t parent =
+  {
+      .Child_Quantity = 1,
+      .Child_Order    = EN_CHOICE,
+      .Child          = root,
+  };
+  return parse_parent_element(&parent, &source, NULL CONTEXT_ARG);
 }
-#else
-xml_parse_result_t parse_xml(const xs_element_t* root, const char* source)
-{
-  return parse_parent_element(root, &source, NULL);
-}
-#endif // XML_PARSER_CONTEXT
