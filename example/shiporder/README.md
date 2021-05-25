@@ -1,5 +1,81 @@
-XML Parser in C
-===============
+shiporder using linked-list
+===========================
+
+This example demonstrate a parsing of below sXML content.
+
+```XML
+<shiporder orderid="889923"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="shiporder.xsd">
+  <orderperson>John Smith</orderperson>
+  <shipto>
+    <name>Ola Nordmann</name>
+    <address>Langgt 23</address>
+    <city>4000 Stavanger</city>
+    <country>Norway</country>
+  </shipto>
+  <item>
+    <title>Empire Burlesque</title>
+    <note>Special Edition</note>
+    <quantity>1</quantity>
+    <price>10.90</price>
+  </item>
+  <item>
+    <title>Hide your heart</title>
+    <quantity>1</quantity>
+    <price>9.90</price>
+  </item>
+</shiporder>
+```
+
+The schema of above XML file is defined here [shiporder.xsd](1).
+the root element of this XML is "shiporder". It contains three child elements,
+ - orderperson: Name of the person
+ - shipto     : Address to ship
+ - item:      : Details of items in the order. This element can occur from 1 to 10 times in the XML.
+
+ This example uses lihked-list to store the content `item` element.
+
+```C
+typedef struct item_t item_t;
+
+//! Structure to store content of item element
+struct item_t
+{
+    char* title;        //!< Holds content of title element
+    char* note;         //!< Holds content of note element
+    uint32_t quantity;  //!< Holds content of quantity element
+    float price;        //!< Holds content of price element
+    item_t* Next;       //!< Pointer to hold the address of next node (item) in the linked list.
+};
+
+//! Structure to store content of shipto element
+typedef struct
+{
+    char* name;         //!< Holds content of name element
+    char* address;      //!< Holds content of address element
+    char* city;         //!< Holds content of city element
+    char* country;      //!< Holds content of country element
+}shipto_t;
+
+//! Structure to store content of shiporder root element
+typedef struct
+{
+    char* orderperson;  //!< Holds content of orderperson element
+    shipto_t shipto;    //!< Structure to hold content of shipto element
+    item_t* item;       //!< Pointer to linked list structure. Holds content of item element
+    char* orderid;      //!< Holds content of orderid attribute
+}shiporder_t;
+
+```
+
+item_t structure contains the pointer to hold the next node of item_t.
+
+The example contains
+
+```C
+static void* allocate_item(uint32_t occurrence)
+```
 
 A simple and tiny XML parser library in C. It is specifically developed for embedded applications in mind.
 
@@ -108,21 +184,8 @@ For most of the cases you only need XMl schema and the tool will generate all th
 
 ## xs_element_t
 
-This structure represent xml schema element for the parser. It is equivalent to XML schema. It contains all the validation rules for an XML element.
-- Name: It specifies name of XML element
-- MinOccur, MaxOccur: minimum & maximum occurrence of an element in the XML
-- Callback: Optioanl callback function to be called by praser during the parsing of XML.
-            The callback is called when parser successfully completes the parsing of an element.
-- Target:   Target address to store the content of an element. There are three types of target address
-  + static: The target address can be of static (i.e. address of a variable) known at compile time.
-  + dynamic: The target address is assigned at run-time using a callback function that returns target address dynamically to the parser.
-  + Relative: The target address of a curernt element is a offset of its parent elements target address.
-- Content: Specifies the type of element content. It also contains the other restriction of an content such as minimum value and maximum value.
-- Attribute_Quantity: Number of attributes of an element
-- Attribute: Pointe to the address of array of attributes of an element.
-- Child_Quantity: Number of child elements of an element
-- Child: Points to address of array of child elements of an element.
-
+This structure represent xml schema element for the parser. It is equivalent to XML schema.
+For every XML element, you need to define an instance of xs_element_t. They also need to be structured similarly to tree structure of XML elements.
 
 ```C
 //! Structure to define element of XML
@@ -145,7 +208,11 @@ struct xs_element_t
 };
 ```
 
-For every XML element, you need to define an instance of xs_element_t. They also need to be structured similarly to tree structure of XML elements.
+- `string_t Name;` represents name of element
+- `uint32_t MinOccur` & `uint32_t MaxOccur;` represents XSD occurrence indicators minOccurs & maxOccurs.
+- `element_callback Callback;` Callback after successful parsing of an element. Parser calls this callback after completion end tag of an element.
+
+ for more details refer Doxygen documentation.
 
 ### More
 For reporting issues/bugs or requesting features use GitHub issue tracker

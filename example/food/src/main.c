@@ -14,7 +14,8 @@
 
 #include "food.h"
 
-const char xml_str[] =
+//! Input XML file
+static const char xml_str[] =
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 "<food xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
 "      xsi:noNamespaceSchemaLocation=\"food.xsd\">"
@@ -31,7 +32,7 @@ extern void print_food(void);
 
 int main(void)
 {
-  xml_parse_result_t result = parse_xml(&xml_root, xml_str);
+  xml_parse_result_t result = parse_xml(&food_element, xml_str);
   if(result == XML_PARSE_SUCCESS)
   {
     printf("Parsing completed successfully\n");
@@ -44,5 +45,3 @@ int main(void)
 
   return 0;
 }
-
-

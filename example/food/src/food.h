@@ -6,16 +6,17 @@
 
 #include "parse_xml.h"
 
+//! Structure to hold XML content
 typedef struct
 {
-    char* name;
-    float price;
-    char* description;
-    uint32_t calories;
+    char* name;           //!< Holds content of name XML element
+    float price;          //!< Holds content of price XML element
+    char* description;    //!< Holds content of description XML element
+    uint32_t calories;    //!< Holds content of calories XML element
 }food_t;
 
 extern food_t food;
 
-extern const xs_element_t xml_root;
+extern const xs_element_t food_element;
 
 #endif

@@ -41,6 +41,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/xml_content.h" />
+		<Unit filename="../README.md" />
 		<Unit filename="../src/food.c">
 			<Option compilerVar="CC" />
 		</Unit>
