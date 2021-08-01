@@ -4,7 +4,7 @@
 
 #include "food.h"
 
-//! Global variable
+//! Global variable to store content of food XML
 food_t food;
 
 static const xs_attribute_t food_attribute[];
