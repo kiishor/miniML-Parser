@@ -7,8 +7,26 @@
 
 extern void itemCallback(uint32_t occurrence, void* const content, void* context);
 
+//! Global variable to store content of shiporder XML file
 shiporder_t shiporder;
 
+//! Structure containing XML schema property of
+const xs_element_t shiporder_root =
+{
+    .Name.String = "shiporder",
+    .Name.Length = 9,
+    .MinOccur    = 1,
+    .MaxOccur    = 1,
+    .Callback    = NULL,
+    .Target.Type    = EN_STATIC,
+    .Target.Address = &shiporder,
+    .Content.Type   = EN_NO_XML_DATA_TYPE,
+    .Attribute_Quantity = 3,
+    .Attribute          = shiporder_attribute,
+    .Child_Quantity = 3,
+    .Child_Order    = EN_SEQUENCE,
+    .Child          = shiporder_descendant,
+};
 
 static const xs_element_t item_descendant[] =
 {
@@ -161,29 +179,5 @@ static const xs_attribute_t shiporder_attribute[] =
     [2].Content.Facet.String.MinLength = 0,
     [2].Content.Facet.String.MaxLength = 4294967295,
     [2].Use         = EN_REQUIRED,
-};
-
-static const xs_element_t root_descendant[] =
-{
-    [0].Name.String = "shiporder",
-    [0].Name.Length = 9,
-    [0].MinOccur    = 1,
-    [0].MaxOccur    = 1,
-    [0].Callback    = NULL,
-    [0].Target.Type    = EN_STATIC,
-    [0].Target.Address = &shiporder,
-    [0].Content.Type   = EN_NO_XML_DATA_TYPE,
-    [0].Attribute_Quantity = 3,
-    [0].Attribute          = shiporder_attribute,
-    [0].Child_Quantity = 3,
-    [0].Child_Order    = EN_SEQUENCE,
-    [0].Child          = shiporder_descendant,
-};
-
-const xs_element_t shiporder_root =
-{
-    .Child_Quantity = 1,
-    .Child_Order    = EN_CHOICE,
-    .Child          = root_descendant,
 };
 

@@ -57,7 +57,7 @@ typedef enum
 //! List of target type to store the XML content.
 typedef enum
 {
-  EN_STATIC,      //!< Target address is static
+  EN_STATIC,      //!< Target address is static. No dynamic allocation is required.
   EN_DYNAMIC,     //!< call Allocate() callback to get target address.
   EN_RELATIVE,    //!< Target address is relative to its immediate parent target address
   TOTAL_TARGET_ADDRESS_TYPE

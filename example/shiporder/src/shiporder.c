@@ -5,18 +5,22 @@
 
 #include "shiporder.h"
 
-
+//! variable to hold the extracted content of XMl.
 shiporder_t shiporder;
 
-
+//! Structure to define the XML schema properties of child elements of "item" element.
 static const xs_element_t item_descendant[] =
 {
-    [0].Name.String = "title",
-    [0].Name.Length = 5,
-    [0].MinOccur    = 1,
-    [0].MaxOccur    = 1,
-    [0].Target.Type    = EN_RELATIVE,
+    // XML schema properies of title element.
+    [0].Name.String = "title",          //!< Name of an element
+    [0].Name.Length = 5,                //!< length of an element
+    [0].MinOccur    = 1,                //!< Minimum number of times an element shall occur in the XML data
+    [0].MaxOccur    = 1,                //!< Maximum number of times an element can occur in the XML data.
+
+    // Information to store the content of title element.
+    [0].Target.Type    = EN_RELATIVE,           //!< Target address to store the content of title element is relative to address of its parent target address.
     [0].Target.Offset  = offsetof(item_t, title),
+
     [0].Content.Type   = EN_STRING_DYNAMIC,
     [0].Content.Facet.String.MinLength = 0,
     [0].Content.Facet.String.MaxLength = 4294967295,
