@@ -2,7 +2,7 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="shiporder2" />
+		<Option title="shiporder" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
@@ -53,6 +53,10 @@
 		<Unit filename="../src/shiporder_print.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../xml/shiporder.xml" />
+		<Unit filename="../xml/shiporder1.xsd" />
+		<Unit filename="../xml/shiporder2.xsd" />
+		<Unit filename="../xml/shiporder3.xsd" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

@@ -204,7 +204,8 @@ struct xs_element_t
  * \return extern xml_parse_result_t result of XML parsing.
  *
  */
-extern xml_parse_result_t parse_xml(const xs_element_t* root, const char* source
+extern xml_parse_result_t parse_xml(const xs_element_t* root, const char* source,
+                                    void* const target
                                    #if XML_PARSER_CONTEXT
                                      , void* context
                                    #endif // XML_PARSER_CONTEXT

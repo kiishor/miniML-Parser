@@ -15,7 +15,7 @@ typedef struct
     uint32_t calories;    //!< Holds content of calories XML element
 }food_t;
 
-extern food_t food;
+extern food_t waffle;
 
 extern const xs_element_t food_element;
 

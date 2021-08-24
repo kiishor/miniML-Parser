@@ -1,13 +1,58 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <float.h>
-#include <stdio.h>
 
 #include "shiporder.h"
 
 
-shiporder_t shiporder;
+extern void itemCallback(uint32_t occurrence, void* const content, void* context);
+static const xs_attribute_t shiporder_attribute[];
+static const xs_element_t shiporder_descendant[];
 
+//! Holds XML schema property of "shiporder" root element
+const xs_element_t shiporder_root =
+{
+    .Name.String = "shiporder",
+    .Name.Length = 9,
+
+    .MinOccur    = 1,
+    .MaxOccur    = 1,
+
+    .Callback    = NULL,
+
+    .Target.Type    = EN_RELATIVE,  //!< Target address type is relative.
+    .Target.Offset = 0,             //!<
+
+    .Content.Type   = EN_NO_XML_DATA_TYPE,
+
+    .Attribute_Quantity = 3,
+    .Attribute          = shiporder_attribute,
+
+    .Child_Quantity = 3,
+    .Child_Order    = EN_SEQUENCE,
+    .Child          = shiporder_descendant,
+};
+
+//! Holds properties of attributes of root element "shiporder"
+static const xs_attribute_t shiporder_attribute[] =
+{
+    [0].Name.String = "xmlns:xsi",
+    [0].Name.Length = 9,
+    [0].Use         = EN_OPTIONAL,
+
+    [1].Name.String = "xsi:noNamespaceSchemaLocation",
+    [1].Name.Length = 29,
+    [1].Use         = EN_OPTIONAL,
+
+    [2].Name.String = "orderid",
+    [2].Name.Length = 7,
+    [2].Target.Type    = EN_RELATIVE,
+    [2].Target.Offset  = offsetof(shiporder_t, orderid),
+    [2].Content.Type   = EN_STRING_DYNAMIC,
+    [2].Content.Facet.String.MinLength = 0,
+    [2].Content.Facet.String.MaxLength = 4294967295,
+    [2].Use         = EN_REQUIRED,
+};
 
 static const xs_element_t item_descendant[] =
 {
@@ -103,9 +148,6 @@ static const xs_element_t shipto_descendant[] =
     [3].Content.Facet.String.MaxLength = 4294967295,
 };
 
-static void* allocate_item(uint32_t occurrence);
-static void deallocate_item(uint32_t occurrence, void* const content);
-
 static const xs_element_t shiporder_descendant[] =
 {
     [0].Name.String = "orderperson",
@@ -135,72 +177,13 @@ static const xs_element_t shiporder_descendant[] =
     [2].Name.Length = 4,
     [2].MinOccur    = 1,
     [2].MaxOccur    = 10,
-    [2].Callback    = deallocate_item,
-    [2].Target.Type    = EN_DYNAMIC,
-    [2].Target.Allocate = allocate_item,
+    [2].Callback    = itemCallback,
+    [2].Target.Type    = EN_RELATIVE,
+    [2].Target.Offset  = offsetof(shiporder_t, item),
+    [2].Target.Size    = sizeof(item_t),
     [2].Content.Type   = EN_NO_XML_DATA_TYPE,
     [2].Child_Quantity = 4,
     [2].Child_Order    = EN_SEQUENCE,
     [2].Child          = item_descendant,
 };
-
-static const xs_attribute_t shiporder_attribute[] =
-{
-    [0].Name.String = "xmlns:xsi",
-    [0].Name.Length = 9,
-    [0].Use         = EN_OPTIONAL,
-
-    [1].Name.String = "xsi:noNamespaceSchemaLocation",
-    [1].Name.Length = 29,
-    [1].Use         = EN_OPTIONAL,
-
-    [2].Name.String = "orderid",
-    [2].Name.Length = 7,
-    [2].Target.Type    = EN_RELATIVE,
-    [2].Target.Offset  = offsetof(shiporder_t, orderid),
-    [2].Content.Type   = EN_STRING_DYNAMIC,
-    [2].Content.Facet.String.MinLength = 0,
-    [2].Content.Facet.String.MaxLength = 4294967295,
-    [2].Use         = EN_REQUIRED,
-};
-
-static const xs_element_t root_descendant[] =
-{
-    [0].Name.String = "shiporder",
-    [0].Name.Length = 9,
-    [0].MinOccur    = 1,
-    [0].MaxOccur    = 1,
-    [0].Callback    = NULL,
-    [0].Target.Type    = EN_STATIC,
-    [0].Target.Address = &shiporder,
-    [0].Content.Type   = EN_NO_XML_DATA_TYPE,
-    [0].Attribute_Quantity = 3,
-    [0].Attribute          = shiporder_attribute,
-    [0].Child_Quantity = 3,
-    [0].Child_Order    = EN_SEQUENCE,
-    [0].Child          = shiporder_descendant,
-};
-
-const xs_element_t shiporder_root =
-{
-    .Child_Quantity = 1,
-    .Child_Order    = EN_CHOICE,
-    .Child          = root_descendant,
-};
-
-static void* allocate_item(uint32_t occurrence)
-{
-  return calloc(sizeof(item_t), 1);
-}
-
-void deallocate_item(uint32_t occurrence, void* const content)
-{
-  item_t* item = (item_t*)content;
-  printf("title: %s\n", item->title);
-  printf("note: %s\n", item->note);
-  printf("quantity: %u\n", item->quantity);
-  printf("price: %f\n", item->price);
-
-  free(item);
-}
 
