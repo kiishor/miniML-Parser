@@ -1,7 +1,7 @@
 shiporder using linked-list
 ===========================
 
-This example demonstrate a parsing of below sXML content.
+This example demonstrate a parsing of below XML content.
 
 ```XML
 <shiporder orderid="889923"

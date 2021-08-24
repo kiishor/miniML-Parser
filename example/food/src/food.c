@@ -5,7 +5,7 @@
 #include "food.h"
 
 //! Global variable to store content of food XML
-food_t food;
+food_t waffle;
 
 static const xs_attribute_t food_attribute[];
 static const xs_element_t food_descendant[];
@@ -48,7 +48,7 @@ static const xs_element_t food_descendant[] =
     [0].MinOccur    = 1,                                //!< Minimum number of times an element shall occur in the XML
     [0].MaxOccur    = 1,                                //!< Maximum number of times an element can occur in the XML
     [0].Target.Type    = EN_STATIC,                     //!< Target address type is static. No dynamic memory allocation is required.
-    [0].Target.Address  = &food.name,                   //!< Target address to store content of an element
+    [0].Target.Address  = &waffle.name,                   //!< Target address to store content of an element
     [0].Content.Type   = EN_STRING_DYNAMIC,             //!< Content type is string that is allocated dynamically using malloc() by parser
     [0].Content.Facet.String.MinLength = 0,             //!< Minimum length of string
     [0].Content.Facet.String.MaxLength = 4294967295,    //!< Maximum possible length of a string
@@ -58,7 +58,7 @@ static const xs_element_t food_descendant[] =
     [1].MinOccur    = 1,                                //!< Minimum number of times an element shall occur in the XML
     [1].MaxOccur    = 1,                                //!< Maximum number of times an element can occur in the XML
     [1].Target.Type    = EN_STATIC,                     //!< Target address type is static. No dynamic memory allocation is required
-    [1].Target.Address  = &food.price,                  //!< Target address to store content of an element
+    [1].Target.Address  = &waffle.price,                  //!< Target address to store content of an element
     [1].Content.Type   = EN_DECIMAL,                      //!< Content type is decimal i.e. float
     [1].Content.Facet.Decimal.MinValue = -3.40282e+038f,  //!< Minimum possible value of an element
     [1].Content.Facet.Decimal.MaxValue = 3.40282e+038f,   //!< Maximum possible value of an element
@@ -68,7 +68,7 @@ static const xs_element_t food_descendant[] =
     [2].MinOccur    = 1,                                //!< Minimum number of times an element shall occur in the XML
     [2].MaxOccur    = 1,                                //!< Maximum number of times an element can occur in the XML
     [2].Target.Type    = EN_STATIC,                     //!< Target address type is static. No dynamic memory allocation is required.
-    [2].Target.Address  = &food.description,            //!< Target address to store content of an element
+    [2].Target.Address  = &waffle.description,            //!< Target address to store content of an element
     [2].Content.Type   = EN_STRING_DYNAMIC,             //!< Content type is string that is allocated dynamically using malloc() by parser
     [2].Content.Facet.String.MinLength = 0,             //!< Minimum length of string
     [2].Content.Facet.String.MaxLength = 4294967295,    //!< Maximum possible length of a string
@@ -78,7 +78,7 @@ static const xs_element_t food_descendant[] =
     [3].MinOccur    = 1,                                //!< Minimum number of times an element shall occur in the XML
     [3].MaxOccur    = 1,                                //!< Maximum number of times an element can occur in the XML
     [3].Target.Type    = EN_STATIC,                     //!< Target address type is static. No dynamic memory allocation is required.
-    [3].Target.Address  = &food.calories,               //!< Target address to store content of an element
+    [3].Target.Address  = &waffle.calories,               //!< Target address to store content of an element
     [3].Content.Type   = EN_UNSIGNED,                   //!< Content type is unsigned int
     [3].Content.Facet.Uint.MinValue = 0,                //!< Minimum possible value of an element
     [3].Content.Facet.Uint.MaxValue = 4294967295,       //!< Maximum possible value of an element

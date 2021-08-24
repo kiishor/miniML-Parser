@@ -14,20 +14,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <assert.h>
 
 #include "shiporder.h"
 
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
-extern void print_shiporder(size_t itemQuantity);
-
-void itemCallback(uint32_t occurrence, void* const content, void* context)
-{
-  uint32_t* itemQuantity = context;
-  *itemQuantity = occurrence;
-}
+extern void print_shiporder();
 
 int main(int argc, char *argv[])
 {
@@ -46,20 +39,18 @@ int main(int argc, char *argv[])
   }
 
   fseek(fXml, 0, SEEK_END);
-  long size = ftell(fXml);
-  assert(size > 0);
+  size_t size = ftell(fXml);
   fseek(fXml, 0, SEEK_SET);
 
-  char* const xml = malloc((size_t)size);
-  fread(xml, 1, (size_t)size, fXml);
+  char* const xml = malloc(size);
+  fread(xml, 1, size, fXml);
   fclose(fXml);
 
-  uint32_t itemQuantity = 0;
-  xml_parse_result_t result = parse_xml(&shiporder_root, xml, &itemQuantity);
+  xml_parse_result_t result = parse_xml(&shiporder_root, xml);
   if(result == XML_PARSE_SUCCESS)
   {
     printf("Parsing completed successfully\n");
-    print_shiporder(itemQuantity);
+    print_shiporder();
   }
   else
   {
