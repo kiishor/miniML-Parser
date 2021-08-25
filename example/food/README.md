@@ -62,6 +62,12 @@ The *xs_element_t* structure contains all the validation rules of an XML element
 ```
 
 ## How to build and run
+This example doesn't use any platform or OS specific libraries. You only need standard C99 compiler to build this example.
+No need to change any configuration/#define in the parse_xml.c file.
+
+This is a console application. When you execute/run this example it prints extracted XML data on the console.
+
+![Output](docs/image/output.png "Output")
 
 [1]: xml/food.xsd
 [2]: src/food.h

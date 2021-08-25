@@ -146,6 +146,23 @@ The *itemCallback* function increments *itemQuantity* for every invocation.
 
 ## How to build and run
 
+This example doesn't uses any platform/OS specific libraries. You only need standard C99 compiler to build this example.
+
+This example uses element callback and user defined context in the XML parser. By default callback for element and context are disabled to save code space.
+Enable element callback by defining **XML_PARSER_CALLBACK** to 1. Similarly Enable user defined context argument in parse_xml function by defining **XML_PARSER_CONTEXT** to 1.
+Use compiler -D option to set these macros, e.g. `-DXML_PARSER_CALLBACK="1" -DXML_PARSER_CONTEXT="1"`.
+
+
+This is a console application. Execute the application in the command line and provide the path of an XML file in the command line argument. 
+The application will print the extracted XML data on the console.
+
+`shiporder1.exe xml/shiporder.xml`
+
+
+![Output](docs/image/output.png "Output")
+
+
+
 [1]: xml/shiporder1.xsd
 [2]: src/shiporder.h
 [3]: src/shiporder.c
