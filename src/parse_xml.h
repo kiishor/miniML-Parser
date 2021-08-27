@@ -195,13 +195,14 @@ struct xs_element_t
 
 /** \brief XML parser to parse XML file.
  *
- * \param root const xs_element_t*: pointer to root element of XML element tree.
- * \param source const char*      : buffer containing XML source to parse.
- * \param context void*          : User defined context.
+ * \param root const xs_element_t*: Pointer to root element of XML element tree.
+ * \param source const char*      : Buffer containing XML source to parse.
+ * \param target void* const      : Target address to store content of XML element in case of relative addressing type.
+ * \param context void*           : User defined context.
  *        Parser doesn't use/modify this argument for parsing purpose.
  *        It passes this context in all the callback functions.
  *        If not required pass NULL.
- * \return extern xml_parse_result_t result of XML parsing.
+ * \return xml_parse_result_t result of XML parsing.
  *
  */
 extern xml_parse_result_t parse_xml(const xs_element_t* root, const char* source,
