@@ -23,6 +23,14 @@
  */
 extern void print_shiporder(shiporder_t* const pShipOrder, size_t itemQuantity);
 
+
+/** \brief Callback function to save number of times "item" element occurred in the XML
+ *
+ * \param occurrence uint32_t   Number of times element occurred in the XML
+ * \param content void* const   Content of an element
+ * \param context void*         User defined context
+ *
+ */
 void itemCallback(uint32_t occurrence, void* const content, void* context)
 {
   uint32_t* itemQuantity = context;
@@ -31,7 +39,6 @@ void itemCallback(uint32_t occurrence, void* const content, void* context)
 
 int main(int argc, char *argv[])
 {
-
   if(argc < 2)
   {
     printf("Please enter the XML file name\n");
@@ -54,9 +61,9 @@ int main(int argc, char *argv[])
   fread(xml, 1, (size_t)size, fXml);
   fclose(fXml);
 
-  shiporder_t book;
+  shiporder_t book;   // Holds the extracted content of XML file.
 
-  uint32_t itemQuantity = 0;
+  uint32_t itemQuantity = 0;  // Variable that holds the occurrence of "item" element in the XML
   xml_parse_result_t result = parse_xml(&shiporder_root, xml, &book, &itemQuantity);
   if(result == XML_PARSE_SUCCESS)
   {
