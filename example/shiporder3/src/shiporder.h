@@ -8,7 +8,7 @@
 
 typedef struct item_t item_t;
 
-//! Structure to store content of item element
+//! Structure to store content of item element.
 struct item_t
 {
     char* title;        //!< Holds content of title element
@@ -35,8 +35,6 @@ typedef struct
     item_t* item;       //!< Pointer to linked list structure. Holds content of item element
     char* orderid;      //!< Holds content of orderid attribute
 }shiporder_t;
-
-extern shiporder_t shiporder; //!< Global variable to extract the content of XML
 
 // Tree structure of XML elements.
 extern const xs_element_t shiporder_root;

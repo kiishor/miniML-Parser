@@ -6,31 +6,32 @@
 
 #include "parse_xml.h"
 
+//! Structure that represents the data structure of "item" XML element
 typedef struct
 {
-    char* title;
-    char* note;
-    uint32_t quantity;
-    float price;
+    char* title;        //!< Holds content of "title" XML element
+    char* note;         //!< Holds content of "note" XML element
+    uint32_t quantity;  //!< Holds content of "quantity" XML element
+    float price;        //!< Holds content of "price" XML element
 }item_t;
 
+//! structure that represents the data structure of "shipto" XML element
 typedef struct
 {
-    char* name;
-    char* address;
-    char* city;
-    char* country;
+    char* name;     //!< Holds content of "name" XML element
+    char* address;  //!< Holds content of "address" XML element
+    char* city;     //!< Holds content of "city" XML element
+    char* country;  //!< Holds content of "country" XML element
 }shipto_t;
 
+//! Structure that represents the data structure of shiporder XML schema
 typedef struct
 {
-    char* orderperson;
-    shipto_t shipto;
-    item_t* item;
-    char* orderid;
+    char* orderperson;  //!< Holds content of "orderperson" XML element
+    shipto_t shipto;    //!< Holds content of "shipto" XML element
+    item_t* item;       //!< Holds content of "item" XML element
+    char* orderid;      //!< Holds content of "orderid" attribute
 }shiporder_t;
-
-extern shiporder_t shiporder;
 
 extern const xs_element_t shiporder_root;
 

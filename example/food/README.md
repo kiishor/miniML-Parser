@@ -4,8 +4,20 @@ food.xml
 This example demonstrate the parsing of an XML using static addressing method.
 In this method the target address to store XML content is specified at compile time.
 
+## XML
+Sample of XML data to be parsed.
+
+```XML
+<food>
+    <name>Belgian Waffles</name>
+    <price>5.95</price>
+    <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
+    <calories>650</calories>
+</food>
+```
+
 ## Schema
-Schema of XML data to be parsed.
+This is the schema of above XML data.
 
 ```XML
 <?xml version="1.0"?>
@@ -31,8 +43,7 @@ the root element of this XML is "food". It contains four child elements,
 - calories    : Calories of food item
 
 ## food_t
-[food.c][3] contain a global variable `food_t waffle;`, where we shall extract the content of XML data.
-*food_t* is a structure defined in [food.h][2].
+*food_t* is a structure that represent the content of above XML schema. It is defined in [food.h][2].
 
 ```C
 typedef struct
@@ -43,6 +54,7 @@ typedef struct
     uint32_t calories;    //!< Holds content of "calories" XML element
 }food_t;
 ```
+[food.c][3] contain a global variable `food_t waffle;`, where we shall extract the content of XML data.
 
 ## xs_element_t
 [food.c][3] file contains xs_element_t structure for all the elements of XML schema including root element "food".
@@ -60,6 +72,18 @@ The *xs_element_t* structure contains all the validation rules of an XML element
   food_descendant[2].Target.Address  = &waffle.description,
   food_descendant[3].Target.Address  = &waffle.calories,
 ```
+
+## parse_xml
+
+To parse the given XML data, call `parse_xml` function. 
+
+```C
+xml_parse_result_t result = parse_xml(&food_element, xml_str, NULL);
+```
+
+Where,
+- *food_element* is an instance of *xs_element_t* of root element.
+- *xml_str* is a NULL terminated (char*) string containing XML data to parse.
 
 ## How to build and run
 This example doesn't use any platform or OS specific libraries. You only need standard C99 compiler to build this example.
