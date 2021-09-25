@@ -52,11 +52,13 @@ int main(int argc, char *argv[])
     return 2;
   }
 
+  // Get the size of XML file to allocate the memory
   fseek(fXml, 0, SEEK_END);
   long size = ftell(fXml);
   assert(size > 0);
   fseek(fXml, 0, SEEK_SET);
 
+// Allocate the memory to copy XML source from file.
   char* const xml = malloc((size_t)size);
   fread(xml, 1, (size_t)size, fXml);
   fclose(fXml);

@@ -20,7 +20,26 @@
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
-extern void print_shiporder();
+extern void print_shiporder(shiporder_t* const pShipOrder);
+
+//! returns dynamically allocated memory/address to store content of "item" XML element
+void* allocate_item(uint32_t occurrence)
+{
+  return calloc(sizeof(item_t), 1);
+}
+
+//! Deallocates dynamically allocated memory for "item" XML element
+void deallocate_item(uint32_t occurrence, void* const content)
+{
+  printf("*****\titem: %d\t*****\n", occurrence);
+  item_t* item = (item_t*)content;
+  printf("title: %s\n", item->title);
+  printf("note: %s\n", item->note);
+  printf("quantity: %u\n", item->quantity);
+  printf("price: %f\n\n", item->price);
+
+  free(item);
+}
 
 int main(int argc, char *argv[])
 {
@@ -38,19 +57,22 @@ int main(int argc, char *argv[])
     return 2;
   }
 
+  // Get the size of XML file to allocate the memory
   fseek(fXml, 0, SEEK_END);
   size_t size = ftell(fXml);
   fseek(fXml, 0, SEEK_SET);
 
+// Allocate the memory to copy XML source from file.
   char* const xml = malloc(size);
   fread(xml, 1, size, fXml);
   fclose(fXml);
 
-  xml_parse_result_t result = parse_xml(&shiporder_root, xml);
+  shiporder_t book;   // Holds the extracted content of XML file.
+  xml_parse_result_t result = parse_xml(&shiporder_root, xml, &book);
   if(result == XML_PARSE_SUCCESS)
   {
-    printf("Parsing completed successfully\n");
-    print_shiporder();
+    printf("***\tParsing completed successfully\t***\n");
+    print_shiporder(&book);
   }
   else
   {

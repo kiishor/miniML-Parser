@@ -5,8 +5,12 @@
 #include "shiporder.h"
 
 extern void itemCallback(uint32_t occurrence, void* const content, void* context);
+
 static const xs_attribute_t shiporder_attribute[];
 static const xs_element_t shiporder_descendant[];
+static const xs_element_t shipto_descendant[];
+static const xs_element_t item_descendant[];
+
 
 //! Holds XML schema property of "shiporder" root element
 const xs_element_t shiporder_root =

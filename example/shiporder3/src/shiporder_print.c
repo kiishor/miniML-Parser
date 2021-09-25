@@ -4,16 +4,16 @@
 
 #include "shiporder.h"
 
-void print_shiporder(void)
+void print_shiporder(shiporder_t* const pShiporder)
 {
-    printf("orderid: %s\n", shiporder.orderid);
-    printf("orderperson: %s\n", shiporder.orderperson);
-    printf("name: %s\n", shiporder.shipto.name);
-    printf("address: %s\n", shiporder.shipto.address);
-    printf("city: %s\n", shiporder.shipto.city);
-    printf("country: %s\n", shiporder.shipto.country);
+    printf("orderid: %s\n", pShiporder->orderid);
+    printf("orderperson: %s\n", pShiporder->orderperson);
+    printf("name: %s\n", pShiporder->shipto.name);
+    printf("address: %s\n", pShiporder->shipto.address);
+    printf("city: %s\n", pShiporder->shipto.city);
+    printf("country: %s\n", pShiporder->shipto.country);
 
-    const item_t* item = shiporder.item;
+    const item_t* item = pShiporder->item;
     while(item != NULL)
     {
         printf("title: %s\n", item->title);

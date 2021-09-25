@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1629643225 source:c:\project\xml_parser_in_c\example\shiporder1\src\shiporder.c
+1630132734 source:c:\project\xml_parser_in_c\example\shiporder1\src\shiporder.c
 	<stdlib.h>
 	<stdbool.h>
 	<float.h>
@@ -10,13 +10,13 @@
 	<stdbool.h>
 	"parse_xml.h"
 
-1629542617 c:\project\xml_parser_in_c\src\parse_xml.h
+1630088428 c:\project\xml_parser_in_c\src\parse_xml.h
 	"xml_content.h"
 
 1612200043 c:\project\xml_parser_in_c\src\xml_content.h
 	<stdbool.h>
 
-1629645876 source:c:\project\xml_parser_in_c\example\shiporder1\src\main.c
+1632586540 source:c:\project\xml_parser_in_c\example\shiporder1\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdint.h>

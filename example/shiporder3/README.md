@@ -1,52 +1,74 @@
-shiporder using linked-list
-===========================
+shiporder3
+==========
 
-This example demonstrate a parsing of below XML content.
+This example demonstrate the parsing of an XML data using relative addressing and dynamic addressing method.
+In this method the target address to store XML content is deduced at runtime. 
+This example is same as [shiporder1.md][4], except it uses dynamic addressing type for "item" XML element.
+
+In dynamic addressing type, parser calls Allocate function to get the target address to store content of an XML element.
+This example uses linked-list to store the dynamically allocated memory
+## Schema
+Schema of XML data to be parsed.
 
 ```XML
-<shiporder orderid="889923"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:noNamespaceSchemaLocation="shiporder.xsd">
-  <orderperson>John Smith</orderperson>
-  <shipto>
-    <name>Ola Nordmann</name>
-    <address>Langgt 23</address>
-    <city>4000 Stavanger</city>
-    <country>Norway</country>
-  </shipto>
-  <item>
-    <title>Empire Burlesque</title>
-    <note>Special Edition</note>
-    <quantity>1</quantity>
-    <price>10.90</price>
-  </item>
-  <item>
-    <title>Hide your heart</title>
-    <quantity>1</quantity>
-    <price>9.90</price>
-  </item>
-</shiporder>
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:element name="shiporder">
+  <xs:complexType>
+    <xs:sequence>
+      <xs:element name="orderperson" type="xs:string"/>
+      <xs:element name="shipto">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="address" type="xs:string"/>
+            <xs:element name="city" type="xs:string"/>
+            <xs:element name="country" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="item" maxOccurs="10">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="title" type="xs:string"/>
+            <xs:element name="note" type="xs:string" minOccurs="0"/>
+            <xs:element name="quantity" type="xs:positiveInteger"/>
+            <xs:element name="price" type="xs:decimal"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="orderid" type="xs:string" use="required"/>
+  </xs:complexType>
+</xs:element>
+
+</xs:schema>
 ```
 
-The schema of above XML file is defined here [shiporder.xsd](1).
-the root element of this XML is "shiporder". It contains three child elements,
- - orderperson: Name of the person
- - shipto     : Address to ship
- - item:      : Details of items in the order. This element can occur from 1 to 10 times in the XML.
+The schema of above XML file is defined here [shiporder1.xsd][1].
+the root element of this XML is "shiporder". It contains three child elements, and one attribute
+- orderperson  : Name of person to ship order
+- shipto       : Address
+- item         : Description of items to be shipped
 
- This example uses lihked-list to store the content `item` element.
+- orderid      : order id.
+
+
+## shiporder_t
+The structure *shiporder_t* represents data structure defined in the above schema. This structure can hold the content of XML data. It is defined in [shiporder.h][2].
 
 ```C
 typedef struct item_t item_t;
 
-//! Structure to store content of item element
+//! Structure to store content of item element.
 struct item_t
 {
     char* title;        //!< Holds content of title element
     char* note;         //!< Holds content of note element
     uint32_t quantity;  //!< Holds content of quantity element
     float price;        //!< Holds content of price element
-    item_t* Next;       //!< Pointer to hold the address of next node (item) in the linked list.
+    item_t* Next;       //!< Holds the address of next node (item) in the linked list.
 };
 
 //! Structure to store content of shipto element
@@ -69,154 +91,58 @@ typedef struct
 
 ```
 
-item_t structure contains the pointer to hold the next node of item_t.
-
-The example contains
-
-```C
-static void* allocate_item(uint32_t occurrence)
-```
-
-A simple and tiny XML parser library in C. It is specifically developed for embedded applications in mind.
-
-- It is extremely easy to use: You need to call only one API to parse your XML data
-- It has a very small footprint: The parser uses only 1.8 kB[^1] of code memory. Hence, you can use it in very small embedded applications.
-- It is a validating XML parser.
-- It also extracts the content of XML data and converts it to its specified data type.
-- It comes with a tool to generate the source code from XML schema file, instead of manually writing XML tree structure in C.
-
->[^1]: Compiled in IAR ARM 8.50.4 compiler in release mode.
-
-This is a validating XML parser, uses [xs_element_t](#xs_element_t) structure based on XML schema to validate the given XML string.
-[xs_element_t](#xs_element_t) contains all the tree structure of XML elements and elements properties such as element name, its child elements, attributes, content type, etc..
-A user can either manually create or use [XML code generator tool](#xml-code-generator-tool) to generate [xs_element_t](#xs_element_t) structure in C from XML schema file.
-This is a command line tool to that takes schema file as input and generates c source code containing.
-
-The Parser contains four files
-- parse_xml.c   : XML parser source file
-- parse_xml.h   : XML parser header file
-- xml_content.c : XML content extractor source file (used by XML parser internally to extract the XML content).
-- xml_content.h : XML content extractor header file
-
-## Quick start guide
-
-This is a simple XML data that user wants to parse.
-
-```XML
-<food>
-    <name>Belgian Waffles</name>
-    <price>5.95</price>
-    <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
-    <calories>650</calories>
-</food>
-```
-
-This is a XML schema for the above XML data.
-```XML
-<?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
- <xs:element name="food">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element type="xs:string" name="name"/>
-        <xs:element type="xs:float" name="price"/>
-        <xs:element type="xs:string" name="description"/>
-        <xs:element type="xs:unsignedInt" name="calories"/>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-</xs:schema>
-```
-And the user wants to extract the XML data into below C structure.
-
-```C
-struct food_t
-{
-    char* name;
-    float price;
-    char* description;
-    unsigned int calories;
-};
-```
-
-Call `parse_xml` API, pass XML data and instance of [xs_element_t](#xs_element_t) of root element.
-
-```C
-  xml_parse_result_t result = parse_xml(&xml_root, xml_source);
-```
-
-- [xml_root](example/food/src/food.c) is an instance of [xs_element_t](#xs_element_t) structure that represents XML root element.
-  [xs_element_t](#xs_element_t) also holds the address to store the extracted XML data.
-- `xml_source` NULL terminated (char*) string containing XML data to parse.
-
-`parse_xml` function parses the XML string, validate it against the XML schema and extract XML content.
-This parser doesn't contain any static or non-local variables, hence it doesn't need any initialization function.
-It also doesn't use heap/dynamic memory for extracting the XML content.
-It's a [pure function](1) without having any [side effects](2).
-
-### Callbacks from parser
-User can specify optional callback in the [xs_element_t](#xs_element_t).
-This is useful for complex use cases,
- - Where user wants to perform some action after parsing an XML element
- - Allocate/deallocate memory to store extracted contents.
-
-## XML Code generator tool
-
-Creating the [xs_element_t](#xs_element_t) tree structure manually is cumbersome, hence the parser also provides an xml_code_generator tool that generates xs_element_t tree structure for the user.
-This tools generates the xs_element_t tree structure from XML schema. It also generates the structure to store the extracted data.
-
-```shell
-xml_code_generator.exe food.xsd
-```
-
-The tool generates three files
-- [food.c](example/food/src/food.c)             : This file contains xs_element_t tree structure generated from schema. It also declare `food_t food;` to store the XML content.
-- [food.h](example/food/src/food.h)             : This file contains food_t structure created from schema to store the content of XML.
-- [food_print.c](example/food/src/food_print.c) : Generates the printf functions to print the content of food_t to console.
-
-include food.h file in you source file and call parse_xml api as shown below.
-
-```C
-  xml_parse_result_t result = parse_xml(&food_root, xml_source);
-```
-
-For most of the cases you only need XMl schema and the tool will generate all the required code to parse an XML data.
-
 ## xs_element_t
+[shiporder.c][3] file contains *xs_element_t* structure for all the elements of XML schema including root element "shiporder".
+This structure contains all the validation rules of an XML element specified in the schema.
+It also specifies the target address to store the content of an XML element.
 
-This structure represent xml schema element for the parser. It is equivalent to XML schema.
-For every XML element, you need to define an instance of xs_element_t. They also need to be structured similarly to tree structure of XML elements.
+- **xs_element_t shiporder_element**     : Holds properties of root element "shiporder".
+- **xs_attribute_t shiporder_attribute** : Holds properties of attributes of root element "shiporder".
+- **xs_element_t shiporder_descendant**  : Holds properties of all the child elements of root element "shiporder". Child elements: orderperson, shipto, item
+- **xs_element_t shipto_descendant**     : Holds properties of all the child elements of "shipto" XML element. Child elements: name, address, city, country
+- **xs_element_t item_descendant**       : Holds properties of all the child elements of "item" XML element. Child elements: title, note, quantity, price
 
-```C
-//! Structure to define element of XML
-struct xs_element_t
-{
-  string_t Name;                    //!< Name of an element
-  uint32_t MinOccur;                //!< Minimum number of time element must occur
-  uint32_t MaxOccur;                //!< Maximum number of time element is allowed to occur
-  element_callback Callback;        //!< Callback after successful parsing of an element.
+In this example target address type for all the elements except "item" are relative (EN_RELATIVE). i.e. Target address of an element is an offset to target address of its parent element.
+For root element, target address is offset to address passed in the 3rd argument (void* const target) of `parse_xml` function.
+The addressing type for "item" element is dynamic. Where it uses *Allocate* callback function to get target address to store content of "item" element.
 
-  target_address_t Target;          //!< Target address to store content of an element
-  xml_content_t Content;            //!< Content type of an element
+## Handling mulitple occurrence of an element
 
-  uint32_t Attribute_Quantity;      //!< Number of attributes in the element
-  const xs_attribute_t* Attribute;  //!< Address to array of attributes
+The maxOccurs of "item" element is 10. It can occur in an XML data from 1 to 10 times.
+One way to handle multiple occurrence is to use dynamic memory and linked list to store content of an element.
 
-  uint32_t Child_Quantity;          //!< Number of child elements of an element
-  child_order_type_t Child_Order;   //!< order type of child elements
-  const xs_element_t* Child;        //!< Address to array of child elements
-};
-```
+The structure *item_t* contains addition member (`item_t* Next;`), a pointer to hold the address of next node in the linked-list.
 
-- `string_t Name;` represents name of element
-- `uint32_t MinOccur` & `uint32_t MaxOccur;` represents XSD occurrence indicators minOccurs & maxOccurs.
-- `element_callback Callback;` Callback after successful parsing of an element. Parser calls this callback after completion end tag of an element.
+- **context**: This example passes *&book* (`shiporder_t book`) as a context to the parser. Parser passes this context to allocate callback functions as argument.
+Allocator callback of *item* element uses it to store the newly allocated memory for *item_t* as a linked-list.
 
- for more details refer Doxygen documentation.
+- **Allocate**: This example uses *allocate_item* callback function to get target address to store content of *item* element. 
+Parser calls this function before extracting the content of an element or before parsing its child elements.
+In this case *item* element doesn't have any content. It has four child elements. 
+All these child elements uses "relative" addressing type to store their content in the allocated memory.
 
-### More
-For reporting issues/bugs or requesting features use GitHub issue tracker
+The *allocate_item* function also stores the newly allocated memory to the linked-list of *item_t* structure.
+
+## How to build and run
+
+This example doesn't uses any platform/OS specific libraries. You only need standard C99 compiler to build this example.
+
+This example uses element callback in the XML parser. By default callback for element and context are disabled to save code space.
+Enable user defined context argument in parse_xml function by defining **XML_PARSER_CONTEXT** to 1.
+Use compiler -D option to set these macros, e.g. `-DXML_PARSER_CONTEXT="1"`.
 
 
-[1]: https://en.wikipedia.org/wiki/Pure_function
-[2]: https://en.wikipedia.org/wiki/Side_effect_(computer_science)
+This is a console application. Execute the application in the command line and provide the path of an XML file in the command line argument. 
+The application will print the extracted XML data on the console.
+
+`shiporder.exe xml/shiporder.xml`
+
+
+![Output](docs/image/output.png "Output")
+
+
+
+[1]: xml/shiporder1.xsd
+[2]: src/shiporder.h
+[3]: src/shiporder.c
+[4]: ../shiporder1/README.md

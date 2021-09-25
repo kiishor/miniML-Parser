@@ -112,14 +112,14 @@
 	<stdio.h>
 	"shiporder.h"
 
-1620142187 source:c:\project\xml_parser_in_c\src\parse_xml.c
+1629543593 source:c:\project\xml_parser_in_c\src\parse_xml.c
 	<stdint.h>
 	<string.h>
 	<stdbool.h>
 	<stdlib.h>
 	"parse_xml.h"
 
-1620142187 c:\project\xml_parser_in_c\src\parse_xml.h
+1630088428 c:\project\xml_parser_in_c\src\parse_xml.h
 	"xml_content.h"
 
 1612200043 c:\project\xml_parser_in_c\src\xml_content.h
@@ -153,6 +153,32 @@
 	"shiporder.h"
 
 1612200043 source:c:\project\xml_parser_in_c\example\shiporder\src\shiporder_print.c
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	"shiporder.h"
+
+1632586503 source:c:\project\xml_parser_in_c\example\shiporder3\src\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	<stdbool.h>
+	<assert.h>
+	"shiporder.h"
+
+1630145410 c:\project\xml_parser_in_c\example\shiporder3\src\shiporder.h
+	<stdint.h>
+	<stdbool.h>
+	"parse_xml.h"
+
+1630147619 source:c:\project\xml_parser_in_c\example\shiporder3\src\shiporder.c
+	<stdlib.h>
+	<stdbool.h>
+	<float.h>
+	<stddef.h>
+	"shiporder.h"
+
+1630147447 source:c:\project\xml_parser_in_c\example\shiporder3\src\shiporder_print.c
 	<stdlib.h>
 	<stdbool.h>
 	<stdio.h>
