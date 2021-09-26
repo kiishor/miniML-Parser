@@ -14,19 +14,31 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <assert.h>
 
 #include "shiporder.h"
 
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
-extern void print_shiporder(size_t itemQuantity);
+extern void print_shiporder(shiporder_t* const pShipOrder);
 
-void itemCallback(uint32_t occurrence, void* const content, void* context)
+//! returns dynamically allocated memory/address to store content of "item" XML element
+void* allocate_item(uint32_t occurrence)
 {
-  uint32_t* itemQuantity = context;
-  *itemQuantity = occurrence;
+  return calloc(sizeof(item_t), 1);
+}
+
+//! Deallocates dynamically allocated memory for "item" XML element
+void deallocate_item(uint32_t occurrence, void* const content)
+{
+  printf("*****\titem: %d\t*****\n", occurrence);
+  item_t* item = (item_t*)content;
+  printf("title: %s\n", item->title);
+  printf("note: %s\n", item->note);
+  printf("quantity: %u\n", item->quantity);
+  printf("price: %f\n\n", item->price);
+
+  free(item);
 }
 
 int main(int argc, char *argv[])
@@ -45,21 +57,22 @@ int main(int argc, char *argv[])
     return 2;
   }
 
+  // Get the size of XML file to allocate the memory
   fseek(fXml, 0, SEEK_END);
-  long size = ftell(fXml);
-  assert(size > 0);
+  size_t size = ftell(fXml);
   fseek(fXml, 0, SEEK_SET);
 
-  char* const xml = malloc((size_t)size);
-  fread(xml, 1, (size_t)size, fXml);
+// Allocate the memory to copy XML source from file.
+  char* const xml = malloc(size);
+  fread(xml, 1, size, fXml);
   fclose(fXml);
 
-  uint32_t itemQuantity = 0;
-  xml_parse_result_t result = parse_xml(&shiporder_root, xml, &itemQuantity);
+  shiporder_t book;   // Holds the extracted content of XML file.
+  xml_parse_result_t result = parse_xml(&shiporder_root, xml, &book);
   if(result == XML_PARSE_SUCCESS)
   {
-    printf("Parsing completed successfully\n");
-    print_shiporder(itemQuantity);
+    printf("***\tParsing completed successfully\t***\n");
+    print_shiporder(&book);
   }
   else
   {

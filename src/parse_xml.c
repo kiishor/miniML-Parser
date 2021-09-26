@@ -492,7 +492,7 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
   }
 }
 
-xml_parse_result_t parse_xml(const xs_element_t* root, const char* source
+xml_parse_result_t parse_xml(const xs_element_t* root, const char* source, void* const target
                              CONTEXT_PTR)
 {
   const xs_element_t parent =
@@ -501,5 +501,5 @@ xml_parse_result_t parse_xml(const xs_element_t* root, const char* source
       .Child_Order    = EN_CHOICE,
       .Child          = root,
   };
-  return parse_parent_element(&parent, &source, NULL CONTEXT_ARG);
+  return parse_parent_element(&parent, &source, target CONTEXT_ARG);
 }

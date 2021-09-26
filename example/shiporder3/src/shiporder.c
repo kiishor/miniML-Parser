@@ -1,12 +1,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <float.h>
-#include <stdio.h>
+#include <stddef.h>
 
 #include "shiporder.h"
 
-extern void* allocate_item(uint32_t occurrence);
-extern void deallocate_item(uint32_t occurrence, void* const content);
+extern void* allocate_item(uint32_t occurrence, void* context);
 
 static const xs_attribute_t shiporder_attribute[];
 static const xs_element_t shiporder_descendant[];
@@ -21,8 +20,6 @@ const xs_element_t shiporder_root =
     .Name.Length = 9,                          //!< Length of an element name
     .MinOccur    = 1,                          //!< Minimum number of times an element shall occur in the XML
     .MaxOccur    = 1,                          //!< Maximum number of times an element can occur in the XML
-
-    .Callback    = NULL,                       //!< Callback to be called after parsing of an element
 
     .Target.Type    = EN_RELATIVE,             //!< Target address type is relative.
     .Target.Offset = 0,                        //!< Target address Offset from the address passed in "parse_xml function
@@ -65,7 +62,6 @@ static const xs_element_t shiporder_descendant[] =
     [0].Name.Length = 11,                             //!< Length of an element name
     [0].MinOccur    = 1,                              //!< Minimum number of times an element shall occur in the XML
     [0].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the XML
-    [0].Callback    = NULL,                           //!< Callback to be called after parsing of an element
 
     [0].Target.Type   = EN_RELATIVE,                         //!< Target address type is relative.
     [0].Target.Offset = offsetof(shiporder_t, orderperson),  //!< Target address offset from the parent target address
@@ -78,7 +74,6 @@ static const xs_element_t shiporder_descendant[] =
     [1].Name.Length = 6,                                //!< Length of an element name
     [1].MinOccur    = 1,                                //!< Minimum number of times an element shall occur in the XML
     [1].MaxOccur    = 1,                                //!< Maximum number of times an element can occur in the XML
-    [1].Callback    = NULL,                             //!< Callback to be called after parsing of an element
     [1].Target.Type    = EN_RELATIVE,                   //!< Target address type is relative.
     [1].Target.Offset  = offsetof(shiporder_t, shipto), //!< Target address offset from the parent target address
     [1].Content.Type   = EN_NO_XML_DATA_TYPE,           //!< This element doesn't hold any content.
@@ -90,7 +85,6 @@ static const xs_element_t shiporder_descendant[] =
     [2].Name.Length = 4,                                //!< Length of an element name
     [2].MinOccur    = 1,                                //!< Minimum number of times an element shall occur in the XML
     [2].MaxOccur    = 10,                               //!< Maximum number of times an element can occur in the XML
-    [2].Callback    = deallocate_item,                  //!< Callback to be called after parsing of an element
     [2].Target.Type    = EN_DYNAMIC,                    //!< Target address type is dynamic.
     [2].Target.Allocate = allocate_item,                //!< Allocate callback function to get target address dynamically.
     [2].Content.Type   = EN_NO_XML_DATA_TYPE,           //!< This element doesn't hold any content.
@@ -99,6 +93,7 @@ static const xs_element_t shiporder_descendant[] =
     [2].Child          = item_descendant,               //!< Address of child elements xs_element_t structure
 };
 
+
 //! Holds XML schema properties of all the child elements of "item" element
 static const xs_element_t item_descendant[] =
 {
@@ -106,7 +101,6 @@ static const xs_element_t item_descendant[] =
     [0].Name.Length = 5,                              //!< Length of an element name
     [0].MinOccur    = 1,                              //!< Minimum number of times an element shall occur in the XML
     [0].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the XML
-    [0].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [0].Target.Type = EN_RELATIVE,                    //!< Target address type is relative.
     [0].Target.Offset  = offsetof(item_t, title),     //!< Target address offset from the parent target address
     [0].Content.Type   = EN_STRING_DYNAMIC,           //!< Content type is string. It will be dynamically allocated
@@ -117,7 +111,6 @@ static const xs_element_t item_descendant[] =
     [1].Name.Length = 4,                              //!< Length of an element name
     [1].MinOccur    = 0,                              //!< Minimum number of times an element shall occur in the XML
     [1].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the XML
-    [1].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [1].Target.Type = EN_RELATIVE,                    //!< Target address type is relative.
     [1].Target.Offset = offsetof(item_t, note),       //!< Target address offset from the parent target address
     [1].Content.Type  = EN_STRING_DYNAMIC,            //!< Content type is string. It will be dynamically allocated
@@ -128,7 +121,6 @@ static const xs_element_t item_descendant[] =
     [2].Name.Length = 8,                              //!< Length of an element name
     [2].MinOccur    = 1,                              //!< Minimum number of times an element shall occur in the XML
     [2].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the
-    [2].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [2].Target.Type = EN_RELATIVE,                    //!< Target address type is relative.
     [2].Target.Offset  = offsetof(item_t, quantity),  //!< Target address offset from the parent target address
     [2].Content.Type   = EN_UNSIGNED,                 //!< Content type is unsigned int
@@ -139,7 +131,6 @@ static const xs_element_t item_descendant[] =
     [3].Name.Length = 5,                              //!< Length of an element name
     [3].MinOccur    = 1,                              //!< Minimum number of times an element shall occur in the XML
     [3].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the
-    [3].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [3].Target.Type   = EN_RELATIVE,                  //!< Target address type is relative.
     [3].Target.Offset = offsetof(item_t, price),      //!< Target address offset from the parent target address
     [3].Content.Type  = EN_DECIMAL,                      //!< Content type is float
@@ -154,7 +145,6 @@ static const xs_element_t shipto_descendant[] =
     [0].Name.Length = 4,                              //!< Length of an element name
     [0].MinOccur    = 1,                              //!< Minimum number of times an element shall occur in the XML
     [0].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the XML
-    [0].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [0].Target.Type    = EN_RELATIVE,                 //!< Target address type is relative.
     [0].Target.Offset  = offsetof(shipto_t, name),    //!< offset from the parent target address
     [0].Content.Type   = EN_STRING_DYNAMIC,           //!< Content type is string. It will be dynamically allocated
@@ -165,7 +155,6 @@ static const xs_element_t shipto_descendant[] =
     [1].Name.Length = 7,                              //!< Length of an element name
     [1].MinOccur    = 1,                              //!< Minimum number of times an element shall occur in the XML
     [1].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the XML
-    [1].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [1].Target.Type    = EN_RELATIVE,                 //!< Target address type is relative.
     [1].Target.Offset  = offsetof(shipto_t, address), //!< Target address offset from the parent target address
     [1].Content.Type   = EN_STRING_DYNAMIC,           //!< Content type is string. It will be dynamically allocated
@@ -176,7 +165,6 @@ static const xs_element_t shipto_descendant[] =
     [2].Name.Length = 4,                              //!< Length of an element name
     [2].MinOccur    = 1,                              //!< Minimum number of times an element shall occur in the XML
     [2].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the XML
-    [2].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [2].Target.Type   = EN_RELATIVE,                  //!< Target address type is relative.
     [2].Target.Offset = offsetof(shipto_t, city),     //!< Target address offset from the parent target address
     [2].Content.Type  = EN_STRING_DYNAMIC,            //!< Content type is string. It will be dynamically allocated
@@ -187,7 +175,6 @@ static const xs_element_t shipto_descendant[] =
     [3].Name.Length = 7,                              //!< Length of an element name
     [3].MinOccur    = 1,                              //!< Minimum number of times an element shall occur in the XML
     [3].MaxOccur    = 1,                              //!< Maximum number of times an element can occur in the XML
-    [3].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [3].Target.Type   = EN_RELATIVE,                  //!< Target address type is relative.
     [3].Target.Offset = offsetof(shipto_t, country),  //!< Target address offset from the parent target address
     [3].Content.Type  = EN_STRING_DYNAMIC,            //!< Content type is string. It will be dynamically allocated
