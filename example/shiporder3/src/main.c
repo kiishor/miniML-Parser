@@ -21,24 +21,36 @@
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
-extern void print_shiporder(shiporder_t* const pShipOrder, size_t itemQuantity);
+extern void print_shiporder(shiporder_t* const pShiporder);
 
-
-/** \brief Callback function to save number of times "item" element occurred in the XML
- *
- * \param occurrence uint32_t   Number of times element occurred in the XML
- * \param content void* const   Content of an element
- * \param context void*         User defined context
- *
- */
-void itemCallback(uint32_t occurrence, void* const content, void* context)
+//! Callback function to allocate dynamic memory to store content of "item" element
+//! It also implements the linked-list to store the dynamically allocated memory.
+void* allocate_item(uint32_t occurrence, void* context)
 {
-  uint32_t* itemQuantity = context;
-  *itemQuantity = occurrence;
+    shiporder_t* const pShiporder = (shiporder_t*)context;
+    void* const target = calloc(sizeof(item_t), 1);
+
+    // Is this first occurrence of "item" element?
+    if(pShiporder->item == NULL)
+    {
+        pShiporder->item = target;
+        return target;
+    }
+
+    // Traverse to last node of the linked-list
+    item_t* node = pShiporder->item;
+    while(node->Next)
+    {
+        node = node->Next;
+    }
+
+    node->Next = target;
+    return target;
 }
 
 int main(int argc, char *argv[])
 {
+
   if(argc < 2)
   {
     printf("Please enter the XML file name\n");
@@ -58,19 +70,17 @@ int main(int argc, char *argv[])
   assert(size > 0);
   fseek(fXml, 0, SEEK_SET);
 
-// Allocate the memory to copy XML source from file.
+  // Allocate the memory to copy XML source from file.
   char* const xml = malloc((size_t)size);
   fread(xml, 1, (size_t)size, fXml);
   fclose(fXml);
 
   shiporder_t book;   // Holds the extracted content of XML file.
-
-  uint32_t itemQuantity = 0;  // Variable that holds the occurrence of "item" element in the XML
-  xml_parse_result_t result = parse_xml(&shiporder_root, xml, &book, &itemQuantity);
+  xml_parse_result_t result = parse_xml(&shiporder_root, xml, &book, &book);
   if(result == XML_PARSE_SUCCESS)
   {
     printf("Parsing completed successfully\n");
-    print_shiporder(&book, itemQuantity);
+    print_shiporder(&book);
   }
   else
   {

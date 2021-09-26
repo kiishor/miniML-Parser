@@ -1,10 +1,23 @@
 food.xml
 ========
 
-This example demonstrate the parsing of an XML using static addresing method.
+This example demonstrate the parsing of an XML using static addressing method.
 In this method the target address to store XML content is specified at compile time.
 
-Sample XML to be parsed.
+## XML
+Sample of XML data to be parsed.
+
+```XML
+<food>
+    <name>Belgian Waffles</name>
+    <price>5.95</price>
+    <description>Two of our famous Belgian Waffles with plenty of real maple syrup</description>
+    <calories>650</calories>
+</food>
+```
+
+## Schema
+This is the schema of above XML data.
 
 ```XML
 <?xml version="1.0"?>
@@ -29,8 +42,8 @@ the root element of this XML is "food". It contains four child elements,
 - description : Description of food item
 - calories    : Calories of food item
 
-[food.c][3] contain a global variable `food_t food;`, where we shall extract the content of XML data.
-food_t is a structure defined in [food.h][2].
+## food_t
+*food_t* is a structure that represent the content of above XML schema. It is defined in [food.h][2].
 
 ```C
 typedef struct
@@ -40,24 +53,45 @@ typedef struct
     char* description;    //!< Holds content of "description" XML element
     uint32_t calories;    //!< Holds content of "calories" XML element
 }food_t;
-
 ```
+[food.c][3] contain a global variable `food_t waffle;`, where we shall extract the content of XML data.
 
+## xs_element_t
 [food.c][3] file contains xs_element_t structure for all the elements of XML schema including root element "food".
-The xs_element_t structure contains all the validation rule of an XML element specified in the schema.
+The *xs_element_t* structure contains all the validation rules of an XML element specified in the schema.
 
-- `xs_element_t food_element;`       : holds properties of root element "food".
-- `xs_attribute_t food_attribute`    : holds properties of attributes of root element "food".
+- *xs_element_t food_element;*       : holds properties of root element "food".
+- *xs_attribute_t food_attribute*    : holds properties of attributes of root element "food".
 - `xs_element_t food_descendant[4]`  : holds properties of all the child elements of root element "food".
   Each element of an array represent child elements like *name*, *price*, *description* and *calories* sequentially.
   Each element also hold the address of target address statically.
   e.g.
 ```
-  food_descendant[0].Target.Address  = &food.name,
-  food_descendant[1].Target.Address  = &food.price,
-  food_descendant[2].Target.Address  = &food.description,
-  food_descendant[3].Target.Address  = &food.calories,
+  food_descendant[0].Target.Address  = &waffle.name,
+  food_descendant[1].Target.Address  = &waffle.price,
+  food_descendant[2].Target.Address  = &waffle.description,
+  food_descendant[3].Target.Address  = &waffle.calories,
 ```
+
+## parse_xml
+
+To parse the given XML data, call `parse_xml` function. 
+
+```C
+xml_parse_result_t result = parse_xml(&food_element, xml_str, NULL);
+```
+
+Where,
+- *food_element* is an instance of *xs_element_t* of root element.
+- *xml_str* is a NULL terminated (char*) string containing XML data to parse.
+
+## How to build and run
+This example doesn't use any platform or OS specific libraries. You only need standard C99 compiler to build this example.
+No need to change any configuration/#define in the parse_xml.c file.
+
+This is a console application. When you execute/run this example it prints extracted XML data on the console.
+
+![Output](docs/image/output.png "Output")
 
 [1]: xml/food.xsd
 [2]: src/food.h
