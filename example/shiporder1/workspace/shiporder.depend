@@ -1,22 +1,22 @@
 # depslib dependency file v1.0
-1630132734 source:c:\project\xml_parser_in_c\example\shiporder1\src\shiporder.c
+1636731232 source:c:\project\xml_parser_in_c\example\shiporder1\src\shiporder.c
 	<stdlib.h>
 	<stdbool.h>
 	<float.h>
 	"shiporder.h"
 
-1629627977 c:\project\xml_parser_in_c\example\shiporder1\src\shiporder.h
+1636729699 c:\project\xml_parser_in_c\example\shiporder1\src\shiporder.h
 	<stdint.h>
 	<stdbool.h>
 	"parse_xml.h"
 
-1630088428 c:\project\xml_parser_in_c\src\parse_xml.h
+1632679478 c:\project\xml_parser_in_c\src\parse_xml.h
 	"xml_content.h"
 
 1612200043 c:\project\xml_parser_in_c\src\xml_content.h
 	<stdbool.h>
 
-1632586540 source:c:\project\xml_parser_in_c\example\shiporder1\src\main.c
+1632679478 source:c:\project\xml_parser_in_c\example\shiporder1\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<stdint.h>
@@ -24,7 +24,7 @@
 	<assert.h>
 	"shiporder.h"
 
-1629543593 source:c:\project\xml_parser_in_c\src\parse_xml.c
+1632679478 source:c:\project\xml_parser_in_c\src\parse_xml.c
 	<stdint.h>
 	<string.h>
 	<stdbool.h>
@@ -38,7 +38,7 @@
 	<stdlib.h>
 	"parse_xml.h"
 
-1629543133 source:c:\project\xml_parser_in_c\example\shiporder1\src\shiporder_print.c
+1632679478 source:c:\project\xml_parser_in_c\example\shiporder1\src\shiporder_print.c
 	<stdlib.h>
 	<stdbool.h>
 	<stdio.h>
