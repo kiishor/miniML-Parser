@@ -32,10 +32,10 @@ xml_parse_result_t parse_xml(const xs_element_t* root, const char* source, void*
 Where,
 - *root*: instance of [xs_element_t](#xs_element_t) structure of an XML root element.
 - *source*: NULL terminated (char*) string containing XML data to parse.
-- *target*: Target address to store content of an XML data. 
+- *target*: Target address to store content of an XML data.
 Optional, Used only when [Target addressing method](#target-addressing-method) of root element is *relative*.
 pass *NULL* if not used.
-- *context*: Optional user defined context. Parser doesn't use/modify this argument for parsing purpose. 
+- *context*: Optional user defined context. Parser doesn't use/modify this argument for parsing purpose.
 It passes this context in all the callback functions. If not required pass *NULL*.
 
 `parse_xml` function parses the XML string, validate it against the XML schema and extract XML content.
@@ -95,10 +95,9 @@ This tools generates the *xs_element_t* tree structure from XML schema. It also 
 xml_code_generator.exe food.xsd
 ```
 
-The tool generates three files
+The tool generates two files
 - [food.c](example/food/src/food.c)             : This file contains *xs_element_t* tree structure generated from schema. It also declare `food_t food;` to store the XML content.
 - [food.h](example/food/src/food.h)             : This file contains *food_t* structure created from schema to store the content of XML.
-- [food_print.c](example/food/src/food_print.c) : Generates the printf functions to print the content of food_t to console.
 
 For most of the cases you only need XMl schema and the tool will generate all the required code to parse an XML data.
 For more details refer [tool/xml_code_generator][7]
@@ -112,7 +111,12 @@ For more details refer [tool/xml_code_generator][7]
 ## Detailed documentation
 
 ### Target addressing method
-The parser supports three types of target addressing methods. Structure *target_address_t* defines the target address to store the XML content.
+The parser extract the content to the specified target address. There are multiple ways of specifying target address to store XML content.
+- Specifying target address at compile time
+- Specifying target address at run time
+- Specifying target address relative to (or offset from) the target address of parent element
+
+The parser supports above three types of target addressing methods. Structure *target_address_t* defines the target address to store the XML content.
 
 - **static**:
 In this method target address to store XML content is specified at the compile time.
@@ -122,7 +126,7 @@ For more details refer [food][3]
 
 - **dynamic**:
 In this method parser calls allocate callback function to get the target address to store XML content.
-Use this method to specify target address to extract XML content at runtime. 
+Use this method to specify target address to extract XML content at runtime.
 e.g. using malloc()/calloc() to store the XML content on heap memory
 For more details refer [shiporder2][5]
 
@@ -136,7 +140,7 @@ And specify the offset of the member variable from the structure in the child el
 For more details refer [shiporder2][5]
 
 ### XML content
-The parser supports most common data types of XML content such as string, integer, bool, ...  
+The parser supports most common data types of XML content such as string, integer, bool, ...
 *xml_content_t* structure defines the supported XML content types and its restrictions/facets.
 For more details refer the Doxygen documentation.
 
@@ -148,7 +152,7 @@ Use compiler -D option to set these macros, e.g. `-DXML_PARSER_CONTEXT="1"`.
 
 - **Callback for XML Element**:
 Parser calls this callback when it completes the parsing of an XML element.
-Enable element callback by defining **XML_PARSER_CALLBACK** to 1.  
+Enable element callback by defining **XML_PARSER_CALLBACK** to 1.
 Use compiler -D option to set these macros, e.g. `-DXML_PARSER_CALLBACK="1"`
 
 ### More
