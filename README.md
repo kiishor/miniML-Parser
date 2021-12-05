@@ -14,7 +14,7 @@ A simple and tiny XML parser library in C. It is specifically developed for embe
 This is a validating XML parser. It uses [xs_element_t](#xs_element_t) structure based on XML schema to validate the given XML string.
 [xs_element_t](#xs_element_t) contains all the tree structure of XML elements and elements properties such as element name, its child elements, attributes, content type, etc..
 A user can either manually create or use [XML code generator tool](#xml-code-generator-tool) to generate [xs_element_t](#xs_element_t) structure in C from XML schema file.
-This is a command line tool to that takes schema file as input and generates c source code containing.
+This is a command line tool, it takes schema file as input and generates c source code containing.
 
 The Parser contains four files
 - parse_xml.c   : XML parser source file
@@ -88,7 +88,8 @@ struct xs_element_t
 For every XML element, you need to define an instance of *xs_element_t*. They also need to be structured similarly to tree structure of XML elements.
 
 ## XML Code generator tool
-Creating the [xs_element_t](#xs_element_t) tree structure manually is cumbersome, hence the parser also provides an [xml_code_generator][7] tool that generates *xs_element_t* tree structure for the user.
+Creating the [xs_element_t](#xs_element_t) tree structure manually is cumbersome, 
+hence the parser also provides an [xml_code_generator][7] tool that generates *xs_element_t* tree structure for the user.
 This tools generates the *xs_element_t* tree structure from XML schema. It also generates the structure to store the extracted data.
 
 ```shell
@@ -96,8 +97,8 @@ xml_code_generator.exe food.xsd
 ```
 
 The tool generates two files
-- [food.c](example/food/src/food.c)             : This file contains *xs_element_t* tree structure generated from schema. It also declare `food_t food;` to store the XML content.
-- [food.h](example/food/src/food.h)             : This file contains *food_t* structure created from schema to store the content of XML.
+- [food.c](example/food/src/food.c)    : This file contains *xs_element_t* tree structure generated from schema. It also declare `food_t food;` to store the XML content.
+- [food.h](example/food/src/food.h)    : This file contains *food_t* structure created from schema to store the content of XML.
 
 For most of the cases you only need XMl schema and the tool will generate all the required code to parse an XML data.
 For more details refer [tool/xml_code_generator][7]
