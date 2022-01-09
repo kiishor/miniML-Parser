@@ -93,7 +93,7 @@ typedef struct
 This structure contains all the validation rules of an XML element specified in the schema.
 It also specifies the target address to store the content of an XML element.
 
-- **xs_element_t shiporder_element**     : Holds properties of root element "shiporder".
+- **xs_element_t shiporder_root**        : Holds properties of root element "shiporder".
 - **xs_attribute_t shiporder_attribute** : Holds properties of attributes of root element "shiporder".
 - **xs_element_t shiporder_descendant**  : Holds properties of all the child elements of root element "shiporder". Child elements: orderperson, shipto, item
 - **xs_element_t shipto_descendant**     : Holds properties of all the child elements of "shipto" XML element. Child elements: name, address, city, country

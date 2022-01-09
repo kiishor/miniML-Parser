@@ -97,7 +97,7 @@ xml_code_generator.exe food.xsd
 ```
 
 The tool generates two files
-- [food.c](example/food/src/food.c)    : This file contains *xs_element_t* tree structure generated from schema. It also declare `food_t food;` to store the XML content.
+- [food.c](example/food/src/food.c)    : This file contains *xs_element_t* tree structure generated from schema.
 - [food.h](example/food/src/food.h)    : This file contains *food_t* structure created from schema to store the content of XML.
 
 For most of the cases you only need XMl schema and the tool will generate all the required code to parse an XML data.
@@ -157,7 +157,7 @@ Enable element callback by defining **XML_PARSER_CALLBACK** to 1.
 Use compiler -D option to set these macros, e.g. `-DXML_PARSER_CALLBACK="1"`
 
 ### More
-For reporting issues/bugs or requesting features use GitHub issue tracker
+- For reporting issues/bugs or requesting features use [GitHub issue tracker][8]
 
 
 [1]: https://en.wikipedia.org/wiki/Pure_function
@@ -167,3 +167,4 @@ For reporting issues/bugs or requesting features use GitHub issue tracker
 [5]: example/shiporder2/README.md
 [6]: example/shiporder3/README.md
 [7]: tool/README.md
+[8]: https://github.com/kiishor/xml_parser_in_c/issues

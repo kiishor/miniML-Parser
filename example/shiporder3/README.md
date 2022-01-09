@@ -96,7 +96,7 @@ typedef struct
 This structure contains all the validation rules of an XML element specified in the schema.
 It also specifies the target address to store the content of an XML element.
 
-- **xs_element_t shiporder_element**     : Holds properties of root element "shiporder".
+- **xs_element_t shiporder_root**        : Holds properties of root element "shiporder".
 - **xs_attribute_t shiporder_attribute** : Holds properties of attributes of root element "shiporder".
 - **xs_element_t shiporder_descendant**  : Holds properties of all the child elements of root element "shiporder". Child elements: orderperson, shipto, item
 - **xs_element_t shipto_descendant**     : Holds properties of all the child elements of "shipto" XML element. Child elements: name, address, city, country
@@ -127,7 +127,7 @@ The *allocate_item* function also stores the newly allocated memory to the linke
 
 This example doesn't uses any platform/OS specific libraries. You only need standard C99 compiler to build this example.
 
-This example uses element callback in the XML parser. By default callback for element and context are disabled to save code space.
+This example uses user defined context in the XML parser. By default callback for element and context are disabled to save code space.
 Enable user defined context argument in parse_xml function by defining **XML_PARSER_CONTEXT** to 1.
 Use compiler -D option to set these macros, e.g. `-DXML_PARSER_CONTEXT="1"`.
 
