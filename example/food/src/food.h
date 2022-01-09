@@ -17,6 +17,6 @@ typedef struct
 
 extern food_t waffle;
 
-extern const xs_element_t food_element;
+extern const xs_element_t food_root;
 
 #endif

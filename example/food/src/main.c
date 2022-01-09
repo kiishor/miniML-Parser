@@ -32,7 +32,7 @@ extern void print_food(void);
 
 int main(void)
 {
-  xml_parse_result_t result = parse_xml(&food_element, xml_str, NULL);
+  xml_parse_result_t result = parse_xml(&food_root, xml_str, NULL);
   if(result == XML_PARSE_SUCCESS)
   {
     printf("Parsing completed successfully\n");

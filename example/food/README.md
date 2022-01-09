@@ -60,7 +60,7 @@ typedef struct
 [food.c][3] file contains xs_element_t structure for all the elements of XML schema including root element "food".
 The *xs_element_t* structure contains all the validation rules of an XML element specified in the schema.
 
-- *xs_element_t food_element;*       : holds properties of root element "food".
+- *xs_element_t food_root;*       : holds properties of root element "food".
 - *xs_attribute_t food_attribute*    : holds properties of attributes of root element "food".
 - `xs_element_t food_descendant[4]`  : holds properties of all the child elements of root element "food".
   Each element of an array represent child elements like *name*, *price*, *description* and *calories* sequentially.
@@ -78,11 +78,11 @@ The *xs_element_t* structure contains all the validation rules of an XML element
 To parse the given XML data, call `parse_xml` function. 
 
 ```C
-xml_parse_result_t result = parse_xml(&food_element, xml_str, NULL);
+xml_parse_result_t result = parse_xml(&food_root, xml_str, NULL);
 ```
 
 Where,
-- *food_element* is an instance of *xs_element_t* of root element.
+- *food_root* is an instance of *xs_element_t* of root element.
 - *xml_str* is a NULL terminated (char*) string containing XML data to parse.
 
 ## How to build and run
