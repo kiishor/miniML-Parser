@@ -11,7 +11,7 @@ static const xs_attribute_t food_attribute[];
 static const xs_element_t food_descendant[];
 
 //! Structure containing XML schema property of food (root) element.
-const xs_element_t food_element =
+const xs_element_t food_root =
 {
     .Name.String = "food",                     //!< name of XML element
     .Name.Length = 4,                          //!< Length of name
