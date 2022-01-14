@@ -1,9 +1,15 @@
 /**
  * \file
- * \brief   Tests the XML parser library
+ * \brief   Parsing of an XML data using relative addressing method.
 
  * \author  Nandkishor Biradar
  * \date    14 September 2019
+
+ *  Copyright (c) 2019-2022 Nandkishor Biradar
+ *  https://github.com/kiishor
+
+ *  Distributed under the MIT License, (See accompanying
+ *  file LICENSE or copy at https://mit-license.org/)
  */
 
 /*

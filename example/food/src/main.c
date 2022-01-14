@@ -1,9 +1,15 @@
 /**
  * \file
- * \brief   Tests XML parser library
+ * \brief   Simple XML parser demo
 
  * \author  Nandkishor Biradar
  * \date    18 April 2021
+
+ *  Copyright (c) 2019-2022 Nandkishor Biradar
+ *  https://github.com/kiishor
+
+ *  Distributed under the MIT License, (See accompanying
+ *  file LICENSE or copy at https://mit-license.org/)
  */
 
 /*

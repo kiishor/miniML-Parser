@@ -1,8 +1,30 @@
+/**
+ * \file
+ * \brief   Simple XML parser demo
+
+ * \author  Nandkishor Biradar
+ * \date    18 April 2021
+
+ *  Copyright (c) 2019-2022 Nandkishor Biradar
+ *  https://github.com/kiishor
+
+ *  Distributed under the MIT License, (See accompanying
+ *  file LICENSE or copy at https://mit-license.org/)
+ */
+
+/*
+ *  ------------------------------ INCLUDE FILES ------------------------------
+ */
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include <float.h>
 
 #include "food.h"
+
+/*
+ * ----------------------------- GLOBAL VARIABLES -----------------------------
+ */
 
 //! Global variable to store content of food XML
 food_t waffle;
