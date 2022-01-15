@@ -122,6 +122,9 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   {
   case EN_STRING:
   {
+    ASSERT3((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
+    ASSERT3((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
+
     string_t* const String = target;
     String->String = (char*)source;
     String->Length = length;
