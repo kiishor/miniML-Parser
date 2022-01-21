@@ -190,6 +190,9 @@ struct xs_element_t
   uint32_t Attribute_Quantity;      //!< Number of attributes in the element
   const xs_attribute_t* Attribute;  //!< Address to array of attributes
 
+  //!< Relaxed attribute checking. Parser doesn't throw error even if the attributes are duplicate, not found, etc..
+  bool Ignore_Attribute;
+
   uint32_t Child_Quantity;          //!< Number of child elements of an element
   child_order_type_t Child_Order;   //!< order type of child elements
   const xs_element_t* Child;        //!< Address to array of child elements

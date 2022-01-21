@@ -372,7 +372,10 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
       }
     }
 
-    ASSERT(attribute_occurred != element->Attribute_Quantity, XML_SYNTAX_ERROR);
+    if(!element->Ignore_Attribute)
+    {
+      ASSERT(attribute_occurred != element->Attribute_Quantity, XML_SYNTAX_ERROR);
+    }
 
     const char* const tag = source;
     source = get_attribute_tag(source);
@@ -384,7 +387,10 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
       if((length == element->Attribute[i].Name.Length) &&
          (strncmp(tag, element->Attribute[i].Name.String, length) == 0))
       {
-        ASSERT(!occurrence[i], XML_DUPLICATE_ATTRIBUTE);
+        if(!element->Ignore_Attribute)
+        {
+            ASSERT(!occurrence[i], XML_DUPLICATE_ATTRIBUTE);
+        }
 
         occurrence[i] = true;
         *input = source;
@@ -393,8 +399,20 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
         attribute_occurred++;
         break;
       }
-
-      ASSERT(++i < element->Attribute_Quantity, XML_ATTRIBUTE_NOT_FOUND);
+      if(++i >= element->Attribute_Quantity)
+      {
+        if(!element->Ignore_Attribute)
+        {
+          return XML_ATTRIBUTE_NOT_FOUND;
+        }
+        else
+        {
+          *input = source;
+          ASSERT_RESULT(parse_attribute(&element->Attribute[i], input, NULL CONTEXT_ARG));
+          source = *input;
+          break;
+        }
+      }
     }
   }
 }
