@@ -43,7 +43,8 @@
  * \return const char*          If extraction of unsigned values is successful returns the end of string otherwise NULL
  *
  */
-static inline const char* get_tokenized_content(const char* source, const char* const end, const char token, uint32_t* pTarget)
+static inline const char* get_tokenized_content(const char* source, const char* const end,
+                                                const char token, uint32_t* pTarget)
 {
   uint32_t i = 0;
   do
@@ -205,8 +206,8 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
     memcpy(data, source, length);
     data[length] = '\0';
     (*(char**)target) = data;
+    break;
   }
-  break;
 
   case EN_UNSIGNED:
   {
@@ -214,17 +215,17 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
     ASSERT3((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR);
     ASSERT3((value <= content->Facet.Uint.MaxValue), XML_MAX_VALUE_ERROR);
     (*(uint32_t*)target) = value;
+    break;
   }
-  break;
 
   case EN_INTEGER:
-    {
-      int32_t value = strtol(source, NULL, 10);
+  {
+    int32_t value = strtol(source, NULL, 10);
     ASSERT3((value >= content->Facet.Int.MinValue), XML_MIN_VALUE_ERROR);
     ASSERT3((value <= content->Facet.Int.MaxValue), XML_MAX_VALUE_ERROR);
     (*(int32_t*)target) = value;
-    }
     break;
+  }
 
   case EN_DECIMAL:
   {
@@ -232,8 +233,8 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
     ASSERT3((value >= content->Facet.Decimal.MinValue), XML_MIN_VALUE_ERROR);
     ASSERT3((value <= content->Facet.Decimal.MaxValue), XML_MAX_VALUE_ERROR);
     (*(float*)target) = value;
+    break;
   }
-  break;
 
   case EN_ENUM_STRING:
   {
@@ -246,8 +247,8 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
         return XML_PARSE_SUCCESS;
       }
     }
+    return XML_ENUM_NOT_FOUND;
   }
-  return XML_ENUM_NOT_FOUND;
 
   case EN_ENUM_UINT:
   {
@@ -261,8 +262,8 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
         return XML_PARSE_SUCCESS;
       }
     }
+    return XML_ENUM_NOT_FOUND;
   }
-  return XML_ENUM_NOT_FOUND;
 
   case EN_DURATION:
     return get_duration(source, source + length, target);
