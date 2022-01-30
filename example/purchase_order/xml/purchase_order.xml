@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PurchaseOrder OrderDate="1900-01-01" xmlns="http://tempuri.org/PurchaseOrderSchema.xsd">
+  <ShipTo country="India">
+    <name>Amol</name>
+    <street>Jalkot road, Udgir</street>
+    <city>Latur</city>
+    <state>Maharashtra</state>
+    <zip>412503</zip>
+  </ShipTo>
+  <ShipTo country="India">
+    <name>Kishor</name>
+    <street>Phoolpada road</street>
+    <city>Virar</city>
+    <state>Maharashtra</state>
+    <zip>401302</zip>
+  </ShipTo>
+  <BillTo country="India">
+    <name>Kiran</name>
+    <street>Mathur village</street>
+    <city>Kanchipuram</city>
+    <state>TamilNadu</state>
+    <zip>602105</zip>
+  </BillTo>
+</PurchaseOrder>
