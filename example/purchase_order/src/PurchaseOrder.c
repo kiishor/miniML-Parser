@@ -194,7 +194,7 @@ static const xs_element_t PurchaseOrder_descendant[] =
 static const xs_attribute_t PurchaseOrder_attribute[] =
 {
     [0].Name.String = "xmlns",
-    [0].Name.Length = 9,
+    [0].Name.Length = 5,
     [0].Use         = EN_OPTIONAL,
 
     [1].Name.String = "xsi:noNamespaceSchemaLocation",
