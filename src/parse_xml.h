@@ -56,6 +56,7 @@ typedef enum
   XML_MAX_VALUE_ERROR,        //!< Value of content is greater than maxValue of restriction facet.
   XML_ENUM_NOT_FOUND,         //!< Content doesn't match with any of specified enumerations
   XML_DURATION_SYNTAX_ERROR,  //!< XML syntax error in duration content.
+  XML_DATE_TIME_SYNTAX_ERROR, //!< XML syntax error in date time content
 
   FAILED_TO_ALLOCATE_MEMORY   //!< Failed to allocate the memory of string dynamic type.
 }xml_parse_result_t;

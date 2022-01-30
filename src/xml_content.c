@@ -33,6 +33,62 @@
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
 
+
+/** \brief Extract the unsigned value separated by specified token.
+ *
+ * \param source const char*    XML content source
+ * \param end const char*const  End of XML content source
+ * \param token const char      token separating unsigned value in the string
+ * \param pTarget uint32_t*     Target to store extracted value.
+ * \return const char*          If extraction of unsigned values is successful returns the end of string otherwise NULL
+ *
+ */
+static inline const char* get_tokenized_content(const char* source, const char* const end, const char token, uint32_t* pTarget)
+{
+  uint32_t i = 0;
+  do
+  {
+    char* endPtr;
+    uint32_t value = strtoul(source, &endPtr, 10);
+    if(endPtr > end)
+    {
+      return NULL;
+    }
+    source = endPtr;
+    pTarget[i] = value;
+
+    if(++i == 3)
+    {
+      return source;
+    }
+
+    if(token != *source++)
+    {
+      return NULL;
+    }
+  }while(1);
+}
+
+/** \brief extract the xs:dateTime from XML content
+ *
+ * \param source const char* : XML content source
+ * \param end const char* const : End of XML content source
+ * \param pTarget uint32_t* : Target to store xs:dateTime
+ * \return xml_parse_result_t: Result of operation.
+ *
+ */
+static inline xml_parse_result_t get_date_time(const char* source, const char* const end, uint32_t* pTarget)
+{
+  source = get_tokenized_content(source, end, '-', pTarget);
+  ASSERT3(source, XML_DATE_TIME_SYNTAX_ERROR);
+
+  if(*source++ == 'T')
+  {
+    ASSERT3(get_tokenized_content(source, end, ':', pTarget), XML_DATE_TIME_SYNTAX_ERROR);
+  }
+  return XML_PARSE_SUCCESS;
+}
+
 /** \brief Helper function to extract content of xs:date or xs:time depending on passed tokens.
  * To extract xs:date content pass "YMD"and to extract xs:time pass "HMS" as token.
  *
@@ -72,7 +128,7 @@ static inline bool get_duration_content(const char* source, const char* const en
 /** \brief Extracts the xs:duration from XML content.
  *
  * \param source const char* : XML content source.
- * \param end const char*const : end of XML content.
+ * \param end const char* const : end of XML content.
  * \param duration xs_duration_t* const : pointer to store xs:duration.
  * \return xml_parse_result_t : Result of operation.
  *
@@ -161,6 +217,15 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   }
   break;
 
+  case EN_INTEGER:
+    {
+      int32_t value = strtol(source, NULL, 10);
+    ASSERT3((value >= content->Facet.Int.MinValue), XML_MIN_VALUE_ERROR);
+    ASSERT3((value <= content->Facet.Int.MaxValue), XML_MAX_VALUE_ERROR);
+    (*(int32_t*)target) = value;
+    }
+    break;
+
   case EN_DECIMAL:
   {
     float value = strtof(source, NULL);
@@ -202,6 +267,16 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   case EN_DURATION:
     return get_duration(source, source + length, target);
 
+  case EN_DATE:
+    ASSERT3(get_tokenized_content(source, source + length, '-', target), XML_DATE_TIME_SYNTAX_ERROR);
+    return XML_PARSE_SUCCESS;
+
+  case EN_TIME:
+    ASSERT3(get_tokenized_content(source, source + length, ':', target), XML_DATE_TIME_SYNTAX_ERROR);
+    return XML_PARSE_SUCCESS;
+
+  case EN_DATE_TIME:
+    return get_date_time(source, source + length, target);
 
   default:
     return XML_CONTENT_UNSUPPORTED;
