@@ -1,7 +1,7 @@
 XML Parser in C
 ===============
 
-A simple and tiny XML parser library in C. It is specifically developed for embedded applications in mind.
+A simple and tiny validating XML parser library in C. It is specifically developed for embedded applications in mind.
 
 - It is extremely easy to use: You need to call only one API to parse your XML data
 - It has a very small footprint: The parser uses only 1.8 kB[^1] of code memory. Hence, you can use it in very small embedded applications.
