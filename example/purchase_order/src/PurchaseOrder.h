@@ -8,7 +8,7 @@
 
 * For further details refer,
 * https://github.com/kiishor/xml_code_generator
-* https://github.com/kiishor/xml_parser_in_c
+* https://github.com/kiishor/miniML-Parser
 */
 
 #ifndef PurchaseOrder_H_INCLUDED
