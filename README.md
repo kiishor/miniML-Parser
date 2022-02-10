@@ -1,7 +1,7 @@
 XML Parser in C
 ===============
 
-A simple and tiny validating XML parser library in C. It is specifically developed for embedded applications in mind.
+A simple and tiny validating [XML parser][9] library in C. It is specifically developed for embedded applications in mind.
 
 - It is extremely easy to use: You need to call only one API to parse your XML data
 - It has a very small footprint: The parser uses only 1.8 kB[^1] of code memory. Hence, you can use it in very small embedded applications.
@@ -88,7 +88,7 @@ struct xs_element_t
 For every XML element, you need to define an instance of *xs_element_t*. They also need to be structured similarly to tree structure of XML elements.
 
 ## XML Code generator tool
-Creating the [xs_element_t](#xs_element_t) tree structure manually is cumbersome, 
+Creating the [xs_element_t](#xs_element_t) tree structure manually is cumbersome,
 hence the parser also provides an [xml_code_generator][7] tool that generates *xs_element_t* tree structure for the user.
 This tools generates the *xs_element_t* tree structure from XML schema. It also generates the structure to store the extracted data.
 
@@ -167,4 +167,5 @@ Use compiler -D option to set these macros, e.g. `-DXML_PARSER_CALLBACK="1"`
 [5]: example/shiporder2/README.md
 [6]: example/shiporder3/README.md
 [7]: tool/README.md
-[8]: https://github.com/kiishor/xml_parser_in_c/issues
+[8]: https://github.com/kiishor/miniML-Parser/issues
+[9]: https://github.com/kiishor/miniML-Parser
