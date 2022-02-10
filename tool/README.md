@@ -1,10 +1,10 @@
 XML code generator
 ==================
 
-This is a source code generator tool for [xml parser in c][1]. This application parses XML schema file 
+This is a source code generator tool for [xml parser in c][1]. This application parses XML schema file
 and generates C source code that can be used for parsing XML file.
 
-It generates *xs_element_t* data structure in *C* based on the XML schema file. This structure contains all the 
+It generates *xs_element_t* data structure in *C* based on the XML schema file. This structure contains all the
 schema properties of XML elements such as element name, its child elements, attributes, content type, etc..
 It also contains the tree structure of XML elements in the schema.
 The parser uses this *xs_element_t* structure for validating the input XML file against XML schema constraints (rules).
@@ -58,9 +58,9 @@ typedef struct
 
 ### food.c
 
-Source file contains the *xs_element_t* for each element in the schema.  
+Source file contains the *xs_element_t* for each element in the schema.
 
-*food_root* is the *xs_element_t* variable for root element "food". 
+*food_root* is the *xs_element_t* variable for root element "food".
 It represents all the XML element properties of "food" element in schema.
 Also, it holds the address of its attributes (*food_attribute*) and child elements (*food_descendant*).
 
@@ -95,9 +95,9 @@ static const xs_element_t food_descendant[] =
     [0].Content.Type   = EN_STRING_DYNAMIC,
     [0].Content.Facet.String.MinLength = 0,
     [0].Content.Facet.String.MaxLength = 4294967295,
-    
+
     ...
-    
+
     [3].Name.String = "calories",
     [3].Name.Length = 8,
     [3].MinOccur    = 1,
@@ -131,11 +131,11 @@ For further information on how to use these food.c and food.h for parsing XML fi
 ## Command line options
 
 ### Callback
-`-b` or `--callback` 
+`-b` or `--callback`
 
 Code generator includes *Callback* member in each *xs_element_t* variables of generated code.
 
-By default *Callback* member variable is disabled in the *xs_element_t* structure to save code space. 
+By default *Callback* member variable is disabled in the *xs_element_t* structure to save code space.
 Hence, to avoid compilation error, code generator also by default omits the *Callback* member in the generated code.
 Use this option in the command line when you have enabled *Callback* member in the XML parser.
 
@@ -149,12 +149,12 @@ The dynamic addressing method enables user to allocate memory at runtime to stor
 
 ### Enable context
 
-`-c` or `--context` 
+`-c` or `--context`
 
 Code generator includes *context* argument in the signature of *allocate* callback function.
 
 By default user defined context in the XML parser is disabled to save code space.
-Hence, to avoid compilation error, code generator also by default omits the *context* argument 
+Hence, to avoid compilation error, code generator also by default omits the *context* argument
 in the *allocate* callback function.
 Use this option in the command line when you have enabled the *context* argument in the XML parser.
 
@@ -162,6 +162,6 @@ Use this option in the command line when you have enabled the *context* argument
 - For reporting issues/bugs or requesting features use [GitHub issue tracker][3]
 
 
-[1]: https://github.com/kiishor/xml_parser_in_c
-[2]: https://github.com/kiishor/xml_parser_in_c/tree/master/example/food
+[1]: https://github.com/kiishor/miniML-Parser
+[2]: https://github.com/kiishor/miniML-Parser/tree/master/example/food
 [3]: https://github.com/kiishor/xml_code_generator/issues
