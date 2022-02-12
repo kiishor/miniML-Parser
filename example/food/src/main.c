@@ -20,6 +20,10 @@
 
 #include "food.h"
 
+/*
+ *  ------------------------------ GLOBAL VARIABLES ------------------------------
+ */
+
 //! Input XML file
 static const char xml_str[] =
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -31,6 +35,10 @@ static const char xml_str[] =
 "    <calories>650</calories>"
 "</food>";
 
+#define ADD_RESULT_CODE(code, description) [code] = #description,
+const char* Result_Text[] = {XML_PARSER_RESULT};
+#undef ADD_RESULT_CODE
+
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
@@ -39,14 +47,10 @@ extern void print_food(void);
 int main(void)
 {
   xml_parse_result_t result = parse_xml(&food_root, xml_str, NULL);
+  printf("%s\n", Result_Text[result]);
   if(result == XML_PARSE_SUCCESS)
   {
-    printf("Parsing completed successfully\n");
     print_food();
-  }
-  else
-  {
-    printf("Failed to parse XML file\n");
   }
 
   return 0;

@@ -31,7 +31,7 @@
 
 //! List of result code of \ref parse_xml
 #define XML_PARSER_RESULT \
-  ADD_RESULT_CODE(XML_PARSE_SUCCESS,                XML is successfully parsed.)  \
+  ADD_RESULT_CODE(XML_PARSE_SUCCESS,                Successfully parsed XML.)  \
   ADD_RESULT_CODE(XML_INCOMPLETE_SOURCE,            incomplete XML source.)    \
   ADD_RESULT_CODE(XML_SYNTAX_ERROR,                 XML is not well formed.)  \
   ADD_RESULT_CODE(XML_INVALID_START_TOKEN_ERR,      XML is not well formed. '<' start token not found.)  \
