@@ -44,7 +44,7 @@ Input XML schema.
 ### food.h
 
 Header file contains the C structure *food_t* based on the data structure of input XML schema.
-This structure is useful to store the extracted data from the XML file by [XML parser][1].
+This structure is useful to store the extracted content from the XML file by [XML parser][1].
 
 ```C
 typedef struct
