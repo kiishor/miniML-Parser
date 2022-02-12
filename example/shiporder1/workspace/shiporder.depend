@@ -69,3 +69,48 @@
 	<assert.h>
 	"shiporder.h"
 
+1644511077 source:c:\project\miniml-parser\src\parse_xml.c
+	<stdint.h>
+	<string.h>
+	<stdbool.h>
+	<stdlib.h>
+	"parse_xml.h"
+
+1644644234 c:\project\miniml-parser\src\parse_xml.h
+	"xml_content.h"
+
+1644511077 c:\project\miniml-parser\src\xml_content.h
+	<stdbool.h>
+
+1644511077 source:c:\project\miniml-parser\src\xml_content.c
+	<stdint.h>
+	<string.h>
+	<stdbool.h>
+	<stdlib.h>
+	"parse_xml.h"
+
+1644511077 source:c:\project\miniml-parser\example\shiporder1\src\shiporder.c
+	<stdlib.h>
+	<stdbool.h>
+	<float.h>
+	"shiporder.h"
+
+1644511077 c:\project\miniml-parser\example\shiporder1\src\shiporder.h
+	<stdint.h>
+	<stdbool.h>
+	"parse_xml.h"
+
+1644511077 source:c:\project\miniml-parser\example\shiporder1\src\shiporder_print.c
+	<stdlib.h>
+	<stdbool.h>
+	<stdio.h>
+	"shiporder.h"
+
+1644648523 source:c:\project\miniml-parser\example\shiporder1\src\main.c
+	<stdio.h>
+	<stdlib.h>
+	<stdint.h>
+	<stdbool.h>
+	<assert.h>
+	"shiporder.h"
+

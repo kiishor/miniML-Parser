@@ -25,6 +25,14 @@
 #include "PurchaseOrder.h"
 
 /*
+ *  ------------------------------ GLOBAL VARIABLES ------------------------------
+ */
+
+#define ADD_RESULT_CODE(code, description) [code] = #description,
+const char* Result_Text[] = {XML_PARSER_RESULT};
+#undef ADD_RESULT_CODE
+
+/*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
 extern void print_purchase_order(PurchaseOrder_t* const pPurchaseOrder, size_t shipTo_Quantity);
@@ -73,14 +81,10 @@ int main(int argc, char *argv[])
 
   uint32_t shipTo_Quantity = 0;  // Variable that holds the occurrence of "ShipTo" element in the XML
   xml_parse_result_t result = parse_xml(&PurchaseOrder_root, xml, &purchaseOrder, &shipTo_Quantity);
+  printf("%s\n", Result_Text[result]);
   if(result == XML_PARSE_SUCCESS)
   {
-    printf("Parsing completed successfully\n");
     print_purchase_order(&purchaseOrder, shipTo_Quantity);
-  }
-  else
-  {
-    printf("Failed to parse XML file\n");
   }
 
   free(xml);
