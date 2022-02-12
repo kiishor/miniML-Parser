@@ -24,6 +24,14 @@
 #include "shiporder.h"
 
 /*
+ *  ------------------------------ GLOBAL VARIABLES ------------------------------
+ */
+
+#define ADD_RESULT_CODE(code, description) [code] = #description,
+const char* Result_Text[] = {XML_PARSER_RESULT};
+#undef ADD_RESULT_CODE
+
+/*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
 extern void print_shiporder(shiporder_t* const pShipOrder);
@@ -75,14 +83,10 @@ int main(int argc, char *argv[])
 
   shiporder_t book;   // Holds the extracted content of XML file.
   xml_parse_result_t result = parse_xml(&shiporder_root, xml, &book);
+  printf("%s\n", Result_Text[result]);
   if(result == XML_PARSE_SUCCESS)
   {
-    printf("***\tParsing completed successfully\t***\n");
     print_shiporder(&book);
-  }
-  else
-  {
-    printf("Failed to parse XML file\n");
   }
 
   free(xml);
