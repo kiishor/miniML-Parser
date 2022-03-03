@@ -22,33 +22,25 @@
 #include <stdlib.h>
 
 #include "parse_xml.h"
+#include "parse_xml_internal.h"
 
 /*
  *  ------------------------------- DEFINITION -------------------------------
  */
 
-//! Assert the expression.
-#define ASSERT(expression, error)   \
-do {                                \
-  if(!(expression))                 \
-  {                                 \
-    return error;                   \
-  }                                 \
-}while(0)
-
 //! Assert the result of function.
 #define ASSERT_RESULT(function)           \
 do {                                      \
   xml_parse_result_t result = function;   \
-  ASSERT(result == XML_PARSE_SUCCESS, result);   \
+  ASSERT(result == XML_PARSE_SUCCESS, result, "");   \
 }while(0)
 
 //! Skips the white space till it finds the token
 #define ASSERT_TOKEN(source, token)                 \
 do {                                                \
   source = skip_whitespace(source);                 \
-  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);  \
-  ASSERT((*source++ == token), XML_SYNTAX_ERROR);     \
+  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE, "Incomplete XML source.\n");  \
+  ASSERT((*source++ == token), XML_SYNTAX_ERROR, "XML is not well formed.\n");     \
 }while(0)
 
 #if XML_PARSER_CONTEXT
@@ -200,15 +192,14 @@ static inline xml_parse_result_t validate_attributes(const xs_element_t* const e
 {
   for(uint32_t i = 0; i < element->Attribute_Quantity; i++)
   {
-    if(!occurrence[i] && element->Attribute[i].Use == EN_REQUIRED)
-    {
-      return XML_ATTRIBUTE_NOT_FOUND;
-    }
+    ASSERT((!occurrence[i] && element->Attribute[i].Use == EN_REQUIRED),
+           XML_ATTRIBUTE_NOT_FOUND,
+           "required attribute '%s' not found\n", element->Attribute[i].Name.String);
   }
   return XML_PARSE_SUCCESS;
 }
 
-/** \brief Validate the empty element.
+/** \brief Validate an empty element.
  *
  * \param element const xs_element_t*const : element to validate.
  * \return xml_parse_result_t result of validation.
@@ -217,22 +208,19 @@ static inline xml_parse_result_t validate_empty_element(const xs_element_t* cons
 {
   for(uint32_t i = 0; i < element->Child_Quantity; i++)
   {
-    if(element->Child[i].MinOccur > 0)
-    {
-      return XML_ELEMENT_MAX_OCCURRENCE_ERR;
-    }
+    ASSERT((element->Child[i].MinOccur > 0), XML_ELEMENT_MIN_OCCURRENCE_ERR,
+           "XML element '%s' occurred less than specified count %d in the schema\n",
+           element->Child[i].Name.String, element->Child[i].MinOccur);
   }
 
-  if(element->Content.Type != EN_NO_XML_DATA_TYPE)
-  {
-    return XML_CONTENT_ERROR;
-  }
+  ASSERT((element->Content.Type != EN_NO_XML_DATA_TYPE), XML_CONTENT_ERROR,
+         "XML element '%s' does not contains content as specified in the schema.\n", element->Name.String);
 
   return XML_PARSE_SUCCESS;
 }
 
 /** \brief Validate that in case of child element order is specified as choice then
- * only element must contain only one child element.(Though it can have multiple
+ * only one child element can be present.(Though it can have multiple
  * occurrence of that element as specified in the maxOccur)
  *
  * \param occurrence uint32_t* : pointer to array of occurrence table
@@ -266,11 +254,12 @@ static inline xml_parse_result_t validate_element(const xs_element_t* const elem
 {
   const char* const tag = *input;
   const char* source = get_element_end_tag(*input);
-  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);
+  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE, "Incomplete XML source. Missing end tag of element.\n");
   size_t length = source - tag;
 
-  ASSERT((length == element->Name.Length) &&
-     (strncmp(element->Name.String, tag, length) == 0), XML_END_TAG_NOT_FOUND);
+  ASSERT((length == element->Name.Length) && (strncmp(element->Name.String, tag, length) == 0),
+         XML_END_TAG_NOT_FOUND,
+         "End tag '%.*s' does not match with start tag '%s' of an element.\n", (int)length, tag, element->Name.String);
 
   ASSERT_TOKEN(source, '>');
   *input = source;
@@ -296,7 +285,7 @@ static inline xml_parse_result_t parse_attribute(const xs_attribute_t* const att
 
   const char* const tag = source;
   source = strchr(source, '"');
-  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);
+  ASSERT((source != NULL), XML_INCOMPLETE_SOURCE, "Incomplete XML source.\n");
   size_t length = source++ - tag;
   *input = source;
   return extract_content(&attribute->Content,
@@ -329,14 +318,14 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
   while(1)
   {
     source = skip_whitespace(source);
-    ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);
+    ASSERT((source != NULL), XML_INCOMPLETE_SOURCE, "Incomplete XML source.\n");
 
     switch(*source)
     {
     case '/':
       {
         source++;
-        ASSERT((*source++ == '>'), XML_SYNTAX_ERROR);
+        ASSERT((*source++ == '>'), XML_SYNTAX_ERROR, "XML is not well formed. Missing '>' after '/'.\n");
         ASSERT_RESULT(validate_attributes(element, occurrence));
         *input = source;
         return validate_empty_element(element);
@@ -356,27 +345,30 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
         {
           const char* const tag = source;
           source = strchr(source, '<');
-          ASSERT((source != NULL), XML_INCOMPLETE_SOURCE);
+          ASSERT((source != NULL), XML_INCOMPLETE_SOURCE, "Incomplete XML source. Missing end tag of element '%s'\n",
+                 element->Name.String);
           size_t length = source++ - tag;
 
           ASSERT_RESULT(extract_content(&element->Content, target, tag, length));
-          ASSERT(*source++ == '/', XML_SYNTAX_ERROR);
+          ASSERT(*source++ == '/', XML_SYNTAX_ERROR, "XML is not well formed. Missing '/' after '<'.\n");
         }
         else
         {
           ASSERT_TOKEN(source, '<');
-          ASSERT(*source++ == '/', XML_SYNTAX_ERROR);
+          ASSERT(*source++ == '/', XML_SYNTAX_ERROR, "XML is not well formed.Missing '/' after '<'.\n");
         }
         *input = source;
         return validate_element(element, input);
       }
     }
 
-    ASSERT(attribute_occurred != element->Attribute_Quantity, XML_SYNTAX_ERROR);
+    ASSERT(attribute_occurred != element->Attribute_Quantity, XML_SYNTAX_ERROR,
+           "XML is not well formed. Missing end tag of element '%s'.\n", element->Name.String);
 
     const char* const tag = source;
     source = get_attribute_tag(source);
-    ASSERT(source != NULL, XML_INCOMPLETE_SOURCE);
+    ASSERT(source != NULL, XML_INCOMPLETE_SOURCE, "Incomplete XML source. Missing element '%s' attribute\n",
+           element->Name.String);
     size_t length = source - tag;
     uint32_t i = 0;
     while(1)
@@ -384,7 +376,9 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
       if((length == element->Attribute[i].Name.Length) &&
          (strncmp(tag, element->Attribute[i].Name.String, length) == 0))
       {
-        ASSERT(!occurrence[i], XML_DUPLICATE_ATTRIBUTE);
+        ASSERT(!occurrence[i], XML_DUPLICATE_ATTRIBUTE,
+               "Duplicate attribute '%s' found in the element '%s'.\n",
+               element->Attribute[i].Name.String, element->Name.String);
 
         occurrence[i] = true;
         *input = source;
@@ -394,7 +388,8 @@ static inline xml_parse_result_t parse_element(const xs_element_t* const element
         break;
       }
 
-      ASSERT(++i < element->Attribute_Quantity, XML_ATTRIBUTE_NOT_FOUND);
+      ASSERT(++i < element->Attribute_Quantity, XML_ATTRIBUTE_NOT_FOUND,
+             "Undefined attribute tag '%.*s' in the element '%s'\n", (int)length, tag, element->Name.String);
     }
   }
 }
@@ -432,14 +427,16 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
     case '?':
     case '!':
       source = strchr(source, '>');
-      ASSERT(source != NULL, XML_INCOMPLETE_SOURCE);
+      ASSERT(source != NULL, XML_INCOMPLETE_SOURCE, "Incomplete XML source. Missing '>'.\n");
       source++;
       continue;
 
     case '/':
       for(uint32_t i = 0; i < parent->Child_Quantity; i++)
       {
-        ASSERT(occurrence[i] >= parent->Child[i].MinOccur, XML_ELEMENT_MIN_OCCURRENCE_ERR);
+        ASSERT(occurrence[i] >= parent->Child[i].MinOccur, XML_ELEMENT_MIN_OCCURRENCE_ERR,
+               "XML element '%s' occurred less than specified count %d in the schema\n",
+               parent->Child[i].Name.String, parent->Child[i].MinOccur);
       }
       *input = ++source;
       return XML_PARSE_SUCCESS;
@@ -447,7 +444,8 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
 
     const char* const tag = source;
     source = get_element_end_tag(source);
-    ASSERT(source != NULL, XML_INCOMPLETE_SOURCE);
+    ASSERT(source != NULL, XML_INCOMPLETE_SOURCE, "Incomplete XML source. Missing end tag (/>) of element '%s'.\n",
+           parent->Name.String);
     size_t length = source - tag;
 
     if(parent->Child_Order != EN_SEQUENCE)
@@ -465,19 +463,26 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
       if(parent->Child_Order == EN_SEQUENCE)
       {
         ASSERT(occurrence[element_index] >= parent->Child[element_index].MinOccur,
-                XML_ELEMENT_MIN_OCCURRENCE_ERR);
+                XML_ELEMENT_MIN_OCCURRENCE_ERR,
+                "XML element '%s' occurred less than specified count %d in the schema\n",
+                parent->Child[element_index].Name.String, parent->Child[element_index].MinOccur);
       }
-      ASSERT(++element_index < parent->Child_Quantity, XML_ELEMENT_NOT_FOUND_ERR);
+      ASSERT(++element_index < parent->Child_Quantity, XML_ELEMENT_NOT_FOUND_ERR,
+             "Undefined XML element '%.*s'\n", (int)length, tag);
     }
 
     const xs_element_t* const element = &parent->Child[element_index];
     void* target = get_target_address(&element->Target, parent_target,
                                       occurrence[element_index] CONTEXT_ARG);
 
-    ASSERT(++occurrence[element_index] <= element->MaxOccur, XML_ELEMENT_MAX_OCCURRENCE_ERR);
+    ASSERT(++occurrence[element_index] <= element->MaxOccur, XML_ELEMENT_MAX_OCCURRENCE_ERR,
+           "XML element '%s' occurred more than specified count %d in the schema.\n",
+           element->Name.String, element->MaxOccur);
+
     if(parent->Child_Order == EN_CHOICE)
     {
-      ASSERT(validate_choice_order(occurrence, parent->Child_Quantity), XML_CHOICE_ELEMENT_ERR);
+      ASSERT(validate_choice_order(occurrence, parent->Child_Quantity), XML_CHOICE_ELEMENT_ERR,
+             "XML element '%s' of type choice contains more than one child element\n", parent->Name.String);
     }
 
     *input = source;

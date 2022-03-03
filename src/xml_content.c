@@ -22,17 +22,11 @@
 #include <stdlib.h>
 
 #include "parse_xml.h"
-
-/*
- *  ------------------------------- DEFINITION -------------------------------
- */
-//! Asserts the expression. if fails return the function with error_code.
-#define ASSERT3(expression, error_code) if(!(expression)) return error_code
+#include "parse_xml_internal.h"
 
 /*
  *  ------------------------------ FUNCTION BODY ------------------------------
  */
-
 
 /** \brief Extract the unsigned value separated by specified token.
  *
@@ -81,11 +75,12 @@ static inline const char* get_tokenized_content(const char* source, const char* 
 static inline xml_parse_result_t get_date_time(const char* source, const char* const end, uint32_t* pTarget)
 {
   source = get_tokenized_content(source, end, '-', pTarget);
-  ASSERT3(source, XML_DATE_TIME_SYNTAX_ERROR);
+  ASSERT(source, XML_DATE_TIME_SYNTAX_ERROR, "Syntax error in XML date time content.\n");
 
   if(*source++ == 'T')
   {
-    ASSERT3(get_tokenized_content(source, end, ':', pTarget), XML_DATE_TIME_SYNTAX_ERROR);
+    ASSERT(get_tokenized_content(source, end, ':', pTarget), XML_DATE_TIME_SYNTAX_ERROR,
+           "Syntax error in XML date time content.\n");
   }
   return XML_PARSE_SUCCESS;
 }
@@ -142,25 +137,19 @@ static inline xml_parse_result_t get_duration(const char* source, const char* co
     duration->Sign = false;
   }
 
-  if(*source++ != 'P')
-  {
-    return XML_DURATION_SYNTAX_ERROR;
-  }
+  ASSERT(*source++ == 'P', XML_DURATION_SYNTAX_ERROR,
+         "Syntax error in XML duration content. Missing 'P' at the start of content.\n");
 
   if(*source != 'T')
   {
-    if(get_duration_content(source, end, "YMD", &duration->Period.Date.Year) == false)
-    {
-      return XML_DURATION_SYNTAX_ERROR;
-    }
+    ASSERT(get_duration_content(source, end, "YMD", &duration->Period.Date.Year), XML_DURATION_SYNTAX_ERROR,
+           "Syntax error in XML duration content.\n");
   }
 
   if(*source++ == 'T')
   {
-    if(get_duration_content(source, end, "HMS", &duration->Period.Time.Hour) == false)
-    {
-      return XML_DURATION_SYNTAX_ERROR;
-    }
+    ASSERT(get_duration_content(source, end, "HMS", &duration->Period.Time.Hour), XML_DURATION_SYNTAX_ERROR,
+           "Syntax error in XML duration content.\n");
   }
 
   return XML_PARSE_SUCCESS;
@@ -179,8 +168,12 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   {
   case EN_STRING:
   {
-    ASSERT3((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
-    ASSERT3((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
+    ASSERT((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR,
+           "Length of xs:string content '%llu' is less than '%u' minLength of restriction facet.\n",
+           length, content->Facet.String.MinLength);
+    ASSERT((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR,
+           "Length of xs:string content '%llu' is greater than '%u' maxLength of restriction facet.\n",
+           length, content->Facet.String.MaxLength);
 
     string_t* const String = target;
     String->String = (char*)source;
@@ -189,8 +182,12 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   }
 
   case EN_CHAR_ARRAY:
-    ASSERT3((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
-    ASSERT3((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
+    ASSERT((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR,
+           "Length of xs:string content '%llu' is less than '%u' minLength of restriction facet.\n",
+           length, content->Facet.String.MinLength);
+    ASSERT((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR,
+           "Length of xs:string content '%llu' is greater than '%u' maxLength of restriction facet.\n",
+           length, content->Facet.String.MaxLength);
 
     memcpy(target, source, length);
     ((char*)target)[length] = '\0';
@@ -198,11 +195,15 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
 
   case EN_STRING_DYNAMIC:
   {
-    ASSERT3((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR);
-    ASSERT3((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR);
+    ASSERT((length >= content->Facet.String.MinLength), XML_MIN_LENGTH_ERROR,
+           "Length of xs:string content '%llu' is less than '%u' minLength of restriction facet.\n",
+           length, content->Facet.String.MinLength);
+    ASSERT((length <= content->Facet.String.MaxLength), XML_MAX_LENGTH_ERROR,
+           "Length of x:string content '%llu' is greater than '%u' maxLength of restriction facet.\n",
+           length, content->Facet.String.MaxLength);
 
     char* data = (char*)malloc(length);
-    ASSERT3(data!= NULL, FAILED_TO_ALLOCATE_MEMORY);
+    ASSERT(data!= NULL, FAILED_TO_ALLOCATE_MEMORY, "Failed to allocate dynamic memory for XML string content\n");
     memcpy(data, source, length);
     data[length] = '\0';
     (*(char**)target) = data;
@@ -212,8 +213,12 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   case EN_UNSIGNED:
   {
     uint32_t value = strtoul(source, NULL, 10);
-    ASSERT3((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR);
-    ASSERT3((value <= content->Facet.Uint.MaxValue), XML_MAX_VALUE_ERROR);
+    ASSERT((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR,
+           "Value of unsigned int content '%d' is less than '%d' minValue of restriction facet.\n",
+           value, content->Facet.Uint.MinValue);
+    ASSERT((value <= content->Facet.Uint.MaxValue), XML_MAX_VALUE_ERROR,
+           "Value of unsigned int content '%d' is greater than '%d' maxValue of restriction facet.\n",
+           value, content->Facet.Uint.MaxValue);
     (*(uint32_t*)target) = value;
     break;
   }
@@ -221,8 +226,12 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   case EN_INTEGER:
   {
     int32_t value = strtol(source, NULL, 10);
-    ASSERT3((value >= content->Facet.Int.MinValue), XML_MIN_VALUE_ERROR);
-    ASSERT3((value <= content->Facet.Int.MaxValue), XML_MAX_VALUE_ERROR);
+    ASSERT((value >= content->Facet.Int.MinValue), XML_MIN_VALUE_ERROR,
+            "Value of integers content '%d' is less than '%d' minValue of restriction facet.\n",
+            value, content->Facet.Int.MinValue);
+    ASSERT((value <= content->Facet.Int.MaxValue), XML_MAX_VALUE_ERROR,
+           "Value of integer content '%d' is greater than '%d' maxValue of restriction facet.\n",
+           value, content->Facet.Int.MaxValue);
     (*(int32_t*)target) = value;
     break;
   }
@@ -230,8 +239,12 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   case EN_DECIMAL:
   {
     float value = strtof(source, NULL);
-    ASSERT3((value >= content->Facet.Decimal.MinValue), XML_MIN_VALUE_ERROR);
-    ASSERT3((value <= content->Facet.Decimal.MaxValue), XML_MAX_VALUE_ERROR);
+    ASSERT((value >= content->Facet.Decimal.MinValue), XML_MIN_VALUE_ERROR,
+            "Value of decimal content '%f' is less than '%f' minValue of restriction facet.\n",
+            value, content->Facet.Decimal.MinValue);
+    ASSERT((value <= content->Facet.Decimal.MaxValue), XML_MAX_VALUE_ERROR,
+           "Value of decimal content '%f' is greater than '%f' maxValue of restriction facet.\n",
+           value, content->Facet.Decimal.MaxValue);
     (*(float*)target) = value;
     break;
   }
@@ -247,6 +260,9 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
         return XML_PARSE_SUCCESS;
       }
     }
+    #if XML_PARSER_DEBUG
+    printf("Content '%.*s' does not match with any of specified enumerations.\n", (int)length, source);
+    #endif // XML_PARSER_DEBUG
     return XML_ENUM_NOT_FOUND;
   }
 
@@ -262,6 +278,9 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
         return XML_PARSE_SUCCESS;
       }
     }
+    #if XML_PARSER_DEBUG
+    printf("Content '%d' does not match with any of specified enumerations.\n", value);
+    #endif // XML_PARSER_DEBUG
     return XML_ENUM_NOT_FOUND;
   }
 
@@ -269,12 +288,18 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
     return get_duration(source, source + length, target);
 
   case EN_DATE:
-    ASSERT3(get_tokenized_content(source, source + length, '-', target), XML_DATE_TIME_SYNTAX_ERROR);
-    return XML_PARSE_SUCCESS;
+    {
+      const char* const result = get_tokenized_content(source, source + length, '-', target);
+      ASSERT(result, XML_DATE_TIME_SYNTAX_ERROR, "Syntax error in XML date content.\n");
+      return XML_PARSE_SUCCESS;
+    }
 
   case EN_TIME:
-    ASSERT3(get_tokenized_content(source, source + length, ':', target), XML_DATE_TIME_SYNTAX_ERROR);
-    return XML_PARSE_SUCCESS;
+    {
+      const char* const result = get_tokenized_content(source, source + length, ':', target);
+      ASSERT(result, XML_DATE_TIME_SYNTAX_ERROR, "Syntax error in XML time content.\n");
+      return XML_PARSE_SUCCESS;
+    }
 
   case EN_DATE_TIME:
     return get_date_time(source, source + length, target);
