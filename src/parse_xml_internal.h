@@ -27,6 +27,7 @@
  *  ------------------------------- DEFINITION -------------------------------
  */
 
+#if XML_PARSER_DEBUG
  //! Assert the expression.
 #define ASSERT(expression, error, ...)   \
 do {                                \
@@ -36,6 +37,18 @@ do {                                \
     return error;                   \
   }                                 \
 }while(0)
+
+#else
+
+#define ASSERT(expression, error, ...)   \
+do {                                \
+  if(!(expression))                 \
+  {                                 \
+    return error;                   \
+  }                                 \
+}while(0)
+
+#endif // XML_PARSER_DEBUG
 
 #endif // PARSE_XML_INTERNAL_H
 

@@ -77,18 +77,17 @@
 	"parse_xml.h"
 	"parse_xml_internal.h"
 
-1645358808 c:\project\miniml-parser\src\parse_xml.h
+1646327401 c:\project\miniml-parser\src\parse_xml.h
 	"xml_content.h"
 
 1644511077 c:\project\miniml-parser\src\xml_content.h
 	<stdbool.h>
 
-1646326097 source:c:\project\miniml-parser\src\xml_content.c
+1646326122 source:c:\project\miniml-parser\src\xml_content.c
 	<stdint.h>
 	<string.h>
 	<stdbool.h>
 	<stdlib.h>
-	<stdio.h>
 	"parse_xml.h"
 	"parse_xml_internal.h"
 
@@ -117,6 +116,6 @@
 	<assert.h>
 	"shiporder.h"
 
-1646325960 c:\project\miniml-parser\src\parse_xml_internal.h
+1646327547 c:\project\miniml-parser\src\parse_xml_internal.h
 	"stdio.h"
 
