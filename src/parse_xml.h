@@ -31,7 +31,7 @@
 
 //! By default printf messages on error are disabled
 #ifndef XML_PARSER_DEBUG
-  #define XML_PARSER_DEBUG 1
+  #define XML_PARSER_DEBUG 0
 #endif // XML_PARSER_DEBUG
 
 //! List of result code of \ref parse_xml
