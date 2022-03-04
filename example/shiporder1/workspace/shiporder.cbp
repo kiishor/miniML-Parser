@@ -39,7 +39,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/parse_xml.h" />
-		<Unit filename="../../../src/parse_xml_internal.h" />
 		<Unit filename="../../../src/xml_content.c">
 			<Option compilerVar="CC" />
 		</Unit>
