@@ -33,6 +33,7 @@
 			<Add option="-Wall" />
 			<Add option="-std=c17" />
 			<Add option='-DXML_PARSER_CONTEXT=&quot;1&quot;' />
+			<Add option='-DXML_PARSER_DEBUG=&quot;1&quot;' />
 			<Add directory="../../../src/includes" />
 			<Add directory="../../../src" />
 		</Compiler>
