@@ -183,26 +183,27 @@
 	<stdio.h>
 	"shiporder.h"
 
-1644856462 source:c:\project\miniml-parser\src\parse_xml.c
+1646546592 source:c:\project\miniml-parser\src\parse_xml.c
 	<stdint.h>
 	<string.h>
 	<stdbool.h>
 	<stdlib.h>
 	"parse_xml.h"
-	"stdio.h"
+	"parse_xml_internal.h"
 
-1644763917 c:\project\miniml-parser\src\parse_xml.h
+1646327940 c:\project\miniml-parser\src\parse_xml.h
 	"xml_content.h"
 
 1644511077 c:\project\miniml-parser\src\xml_content.h
 	<stdbool.h>
 
-1644511077 source:c:\project\miniml-parser\src\xml_content.c
+1646327940 source:c:\project\miniml-parser\src\xml_content.c
 	<stdint.h>
 	<string.h>
 	<stdbool.h>
 	<stdlib.h>
 	"parse_xml.h"
+	"parse_xml_internal.h"
 
 1644649755 source:c:\project\miniml-parser\example\shiporder3\src\main.c
 	<stdio.h>
@@ -229,4 +230,7 @@
 	<stdbool.h>
 	<stdio.h>
 	"shiporder.h"
+
+1646327940 c:\project\miniml-parser\src\parse_xml_internal.h
+	"stdio.h"
 
