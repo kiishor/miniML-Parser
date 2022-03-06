@@ -192,7 +192,7 @@ static inline xml_parse_result_t validate_attributes(const xs_element_t* const e
 {
   for(uint32_t i = 0; i < element->Attribute_Quantity; i++)
   {
-    ASSERT((!occurrence[i] && element->Attribute[i].Use == EN_REQUIRED),
+    ASSERT((occurrence[i] || element->Attribute[i].Use == EN_OPTIONAL),
            XML_ATTRIBUTE_NOT_FOUND,
            "required attribute '%s' not found\n", element->Attribute[i].Name.String);
   }
@@ -208,12 +208,12 @@ static inline xml_parse_result_t validate_empty_element(const xs_element_t* cons
 {
   for(uint32_t i = 0; i < element->Child_Quantity; i++)
   {
-    ASSERT((element->Child[i].MinOccur > 0), XML_ELEMENT_MIN_OCCURRENCE_ERR,
+    ASSERT((!element->Child[i].MinOccur), XML_ELEMENT_MIN_OCCURRENCE_ERR,
            "XML element '%s' occurred less than specified count %d in the schema\n",
            element->Child[i].Name.String, element->Child[i].MinOccur);
   }
 
-  ASSERT((element->Content.Type != EN_NO_XML_DATA_TYPE), XML_CONTENT_ERROR,
+  ASSERT((element->Content.Type == EN_NO_XML_DATA_TYPE), XML_CONTENT_ERROR,
          "XML element '%s' does not contains content as specified in the schema.\n", element->Name.String);
 
   return XML_PARSE_SUCCESS;
