@@ -33,12 +33,14 @@
 			<Add option="-Wall" />
 			<Add option='-DXML_PARSER_CALLBACK=&quot;1&quot;' />
 			<Add option='-DXML_PARSER_CONTEXT=&quot;1&quot;' />
+			<Add option='-DXML_PARSER_DEBUG=&quot;1&quot;' />
 			<Add directory="../../../src" />
 		</Compiler>
 		<Unit filename="../../../src/parse_xml.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../../src/parse_xml.h" />
+		<Unit filename="../../../src/parse_xml_internal.h" />
 		<Unit filename="../../../src/xml_content.c">
 			<Option compilerVar="CC" />
 		</Unit>
