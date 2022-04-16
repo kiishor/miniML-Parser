@@ -180,7 +180,6 @@ static inline void* get_target_address(const target_address_t* const address,
   }
 }
 
-
 /** \brief Verify that all the required attributes occurred in the XML element.
  *
  * \param element const xs_element_t* const : XML element to verify
