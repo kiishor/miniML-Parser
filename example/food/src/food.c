@@ -101,7 +101,7 @@ static const xs_element_t food_descendant[] =
     [3].MaxOccur    = 1,                                //!< Maximum number of times an element can occur in the XML
     [3].Target.Type    = EN_STATIC,                     //!< Target address type is static. No dynamic memory allocation is required.
     [3].Target.Address = &waffle.calories,              //!< Target address to store content of an element
-    [3].Content.Type   = EN_UNSIGNED,                   //!< Content type is unsigned int
+    [3].Content.Type   = EN_UINT32,                   //!< Content type is unsigned int
     [3].Content.Facet.Uint.MinValue = 0,                //!< Minimum possible value of an element
     [3].Content.Facet.Uint.MaxValue = 4294967295,       //!< Maximum possible value of an element
 };

@@ -210,7 +210,7 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
     break;
   }
 
-  case EN_UNSIGNED:
+  case EN_UINT32:
   {
     uint32_t value = strtoul(source, NULL, 10);
     ASSERT((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR,
@@ -223,7 +223,7 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
     break;
   }
 
-  case EN_INTEGER:
+  case EN_INT32:
   {
     int32_t value = strtol(source, NULL, 10);
     ASSERT((value >= content->Facet.Int.MinValue), XML_MIN_VALUE_ERROR,

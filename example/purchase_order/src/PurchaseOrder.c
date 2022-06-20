@@ -72,7 +72,7 @@ static const xs_element_t BillTo_descendant[] =
     [4].Callback    = NULL,
     [4].Target.Type    = EN_RELATIVE,
     [4].Target.Offset  = offsetof(BillTo_t, zip),
-    [4].Content.Type   = EN_INTEGER,
+    [4].Content.Type   = EN_INT32,
     [4].Content.Facet.Int.MinValue = -2147483648,
     [4].Content.Facet.Int.MaxValue = 2147483647,
 };
@@ -142,7 +142,7 @@ static const xs_element_t ShipTo_descendant[] =
     [4].Callback    = NULL,
     [4].Target.Type    = EN_RELATIVE,
     [4].Target.Offset  = offsetof(ShipTo_t, zip),
-    [4].Content.Type   = EN_INTEGER,
+    [4].Content.Type   = EN_INT32,
     [4].Content.Facet.Int.MinValue = -2147483648,
     [4].Content.Facet.Int.MaxValue = 2147483647,
 };
