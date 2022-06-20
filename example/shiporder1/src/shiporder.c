@@ -144,7 +144,7 @@ static const xs_element_t item_descendant[] =
     [2].Callback    = NULL,                           //!< Callback to be called after parsing of an element
     [2].Target.Type = EN_RELATIVE,                    //!< Target address type is relative.
     [2].Target.Offset  = offsetof(item_t, quantity),  //!< Target address offset from the parent target address
-    [2].Content.Type   = EN_UNSIGNED,                 //!< Content type is unsigned int
+    [2].Content.Type   = EN_UINT32,                 //!< Content type is unsigned int
     [2].Content.Facet.Uint.MinValue = 1,              //!< Minimum value of content
     [2].Content.Facet.Uint.MaxValue = 4294967295,     //!< Maximum possible value of content
 
