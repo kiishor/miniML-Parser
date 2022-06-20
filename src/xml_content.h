@@ -34,10 +34,14 @@
   ADD_CONTENT(EN_ENUM_UINT,        Enumeration of unsigned integers) \
   ADD_CONTENT(EN_DECIMAL,          Float data type)          \
   ADD_CONTENT(EN_DOUBLE,           Double data type)         \
-  ADD_CONTENT(EN_INTEGER,          32-bit signed integer)    \
-  ADD_CONTENT(EN_UNSIGNED,         32-bit unsigned integer)  \
-  ADD_CONTENT(EN_LONG,             64-bit signed integer)    \
-  ADD_CONTENT(EN_UNSIGNED_LONG,    64-bit unsigned integer)  \
+  ADD_CONTENT(EN_INT8,             8-bit signed integer)     \
+  ADD_CONTENT(EN_UINT8,            8-bit unsigned integer)   \
+  ADD_CONTENT(EN_INT16,            16-bit signed integer)    \
+  ADD_CONTENT(EN_UINT16,           16-bit unsigned integer)  \
+  ADD_CONTENT(EN_INT32,            32-bit signed integer)    \
+  ADD_CONTENT(EN_UINT32,           32-bit unsigned integer)  \
+  ADD_CONTENT(EN_INT64,            64-bit signed integer)    \
+  ADD_CONTENT(EN_UINT64,           64-bit unsigned integer)  \
   ADD_CONTENT(EN_BOOL,             Boolean data type)           \
   ADD_CONTENT(EN_DATE,             Date in "YYYY-MM-DD" format) \
   ADD_CONTENT(EN_TIME,             Time in "HH:MM:SS" format)   \
