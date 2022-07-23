@@ -424,10 +424,15 @@ static inline xml_parse_result_t parse_parent_element(const xs_element_t* const 
     switch(*source)
     {
     case '?':
+      source = strstr(source, "?>");
+      ASSERT(source != NULL, XML_INCOMPLETE_SOURCE, "Incomplete XML source. Missing \"?>\".\n");
+      source += 2;
+      continue;
+
     case '!':
-      source = strchr(source, '>');
-      ASSERT(source != NULL, XML_INCOMPLETE_SOURCE, "Incomplete XML source. Missing '>'.\n");
-      source++;
+      source = strstr(source, "-->");
+      ASSERT(source != NULL, XML_INCOMPLETE_SOURCE, "Incomplete XML source. Missing end of comment \"-->\".\n");
+      source += (sizeof("-->") - 1);
       continue;
 
     case '/':
