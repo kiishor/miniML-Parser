@@ -29,11 +29,12 @@ void print_purchase_order(PurchaseOrder_t* const pPurchaseOrder, size_t shipTo_Q
       printf("city: %s\n", pPurchaseOrder->ShipTo[i].city);
       printf("state: %s\n", pPurchaseOrder->ShipTo[i].state);
       printf("zip: %d\n", pPurchaseOrder->ShipTo[i].zip);
+      printf("Country : %s\n", pPurchaseOrder->ShipTo[i].country);
     }
     printf("name: %s\n", pPurchaseOrder->BillTo.name);
     printf("street: %s\n", pPurchaseOrder->BillTo.street);
     printf("city: %s\n", pPurchaseOrder->BillTo.city);
     printf("state: %s\n", pPurchaseOrder->BillTo.state);
     printf("zip: %d\n", pPurchaseOrder->BillTo.zip);
-
+    printf("Country : %s\n", pPurchaseOrder->BillTo.country);
 }
