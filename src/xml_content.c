@@ -202,7 +202,7 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
            "Length of x:string content '%llu' is greater than '%u' maxLength of restriction facet.\n",
            length, content->Facet.String.MaxLength);
 
-    char* data = (char*)malloc(length+1);
+    char* data = (char*)malloc(length + 1);
     ASSERT(data!= NULL, FAILED_TO_ALLOCATE_MEMORY, "Failed to allocate dynamic memory for XML string content\n");
     memcpy(data, source, length);
     data[length] = '\0';
@@ -227,10 +227,10 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   {
     uint16_t value = (uint16_t)strtoul(source, NULL, 10);
     ASSERT((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR,
-           "Value of unsigned int content '%d' is less than '%d' minValue of restriction facet.\n",
+           "Value of 16-bit unsigned int content '%d' is less than '%d' minValue of restriction facet.\n",
            value, content->Facet.Uint.MinValue);
     ASSERT((value <= content->Facet.Uint.MaxValue), XML_MAX_VALUE_ERROR,
-           "Value of unsigned int content '%d' is greater than '%d' maxValue of restriction facet.\n",
+           "Value of 16-bit unsigned int content '%d' is greater than '%d' maxValue of restriction facet.\n",
            value, content->Facet.Uint.MaxValue);
     (*(uint16_t*)target) = value;
     break;
@@ -240,10 +240,10 @@ xml_parse_result_t extract_content(const xml_content_t* const content,
   {
     uint8_t value = (uint8_t)strtoul(source, NULL, 10);
     ASSERT((value >= content->Facet.Uint.MinValue), XML_MIN_VALUE_ERROR,
-           "Value of unsigned int content '%d' is less than '%d' minValue of restriction facet.\n",
+           "Value of 8-bit unsigned short content '%d' is less than '%d' minValue of restriction facet.\n",
            value, content->Facet.Uint.MinValue);
     ASSERT((value <= content->Facet.Uint.MaxValue), XML_MAX_VALUE_ERROR,
-           "Value of unsigned int content '%d' is greater than '%d' maxValue of restriction facet.\n",
+           "Value of 8-bit unsigned short content '%d' is greater than '%d' maxValue of restriction facet.\n",
            value, content->Facet.Uint.MaxValue);
     (*(uint8_t*)target) = value;
     break;
