@@ -68,18 +68,18 @@ static inline const char* get_tokenized_content(const char* source, const char* 
  *
  * \param source const char* : XML content source
  * \param end const char* const : End of XML content source
- * \param pTarget uint32_t* : Target to store xs:dateTime
+ * \param pTarget xs_date_time_t* : Target to store xs:dateTime
  * \return xml_parse_result_t: Result of operation.
  *
  */
-static inline xml_parse_result_t get_date_time(const char* source, const char* const end, uint32_t* pTarget)
+static inline xml_parse_result_t get_date_time(const char* source, const char* const end, xs_date_time_t* const pTarget)
 {
-  source = get_tokenized_content(source, end, '-', pTarget);
+  source = get_tokenized_content(source, end, '-', (uint32_t*)&pTarget->Date);
   ASSERT(source, XML_DATE_TIME_SYNTAX_ERROR, "Syntax error in XML date time content.\n");
 
   if(*source++ == 'T')
   {
-    ASSERT(get_tokenized_content(source, end, ':', pTarget), XML_DATE_TIME_SYNTAX_ERROR,
+    ASSERT(get_tokenized_content(source, end, ':', (uint32_t*)&pTarget->Time), XML_DATE_TIME_SYNTAX_ERROR,
            "Syntax error in XML date time content.\n");
   }
   return XML_PARSE_SUCCESS;
